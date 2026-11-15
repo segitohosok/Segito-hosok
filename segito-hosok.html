@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="hu"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Segítő Hősök</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#fff6dc;--card:#ffffff;--ink:#27343a;--mut:#6b7a80;--acc:#f2a900;--acc2:#e8573c;--ok:#2e9e6b;--line:#e8dcb5;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#12313a;--card:#1b4651;--ink:#f4efe0;--mut:#9fc0c4;--acc:#ffcf4a;--acc2:#ff7b5c;--ok:#7fe0b0;--line:#2c6370}}
+:root[data-theme="dark"]{--bg:#12313a;--card:#1b4651;--ink:#f4efe0;--mut:#9fc0c4;--acc:#ffcf4a;--acc2:#ff7b5c;--ok:#7fe0b0;--line:#2c6370}
+*{box-sizing:border-box}html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font:500 16px/1.4 "Baloo 2",system-ui,sans-serif;min-height:100vh}
+#app{max-width:560px;margin:0 auto;padding:12px 14px 90px}
+h1,h2,h3{margin:0;font-weight:800}h2{font-size:22px}h3{font-size:17px}
+.card{background:var(--card);border:2px solid var(--line);border-radius:18px;padding:12px;margin:10px 0}
+.row{display:flex;align-items:center;gap:10px}.sp{justify-content:space-between}.g{flex:1}
+.mut{color:var(--mut);font-size:14px}
+button{font:inherit;font-weight:700;border:0;border-radius:14px;padding:10px 14px;background:var(--acc);color:#2b2200;cursor:pointer}
+button.alt{background:transparent;color:var(--ink);border:2px solid var(--line)}
+button.on{outline:3px solid var(--acc2)}button:disabled{opacity:.45}
+select,input{font:inherit;padding:10px;border-radius:12px;border:2px solid var(--line);background:var(--card);color:var(--ink);width:100%}
+.bar{height:12px;border-radius:8px;background:var(--line);overflow:hidden}.bar i{display:block;height:100%;background:var(--ok);border-radius:8px;transition:width .6s}
+.top{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px}
+.top button{padding:4px 10px;display:flex;align-items:center;gap:6px;background:var(--card);color:var(--ink);border:2px solid var(--line)}
+nav{position:fixed;left:0;right:0;bottom:0;display:flex;gap:4px;padding:8px 8px calc(8px + env(safe-area-inset-bottom,0px));background:var(--card);border-top:2px solid var(--line);max-width:560px;margin:0 auto}
+nav button{flex:1;background:transparent;color:var(--mut);padding:6px 2px;font-size:12px;line-height:1.1}
+nav button.on{color:var(--ink);background:var(--line);outline:0}nav b{display:block;font-size:20px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:8px}
+.chip{display:inline-block;padding:3px 10px;border-radius:20px;background:var(--line);font-size:13px;font-weight:700}
+.toast{position:fixed;left:50%;top:calc(14px + env(safe-area-inset-top,0px));transform:translateX(-50%);background:var(--acc);color:#2b2200;padding:12px 18px;border-radius:16px;font-weight:800;z-index:9;box-shadow:0 6px 20px #0005;animation:pop .5s cubic-bezier(.3,1.6,.5,1);text-align:center;max-width:90%}
+@keyframes pop{from{transform:translateX(-50%) scale(.4);opacity:0}}
+.tool{text-align:center;padding:10px 4px;border-radius:16px;border:3px solid}
+.tool .e{font-size:34px}.sw{width:30px;height:30px;border-radius:50%;padding:0;border:3px solid var(--line)}
+@media (prefers-reduced-motion:reduce){.toast{animation:none}.bar i{transition:none}}
+</style></head><body><div id="app"></div><div id="toastbox"></div>
+<script>
+const SK={kert:{n:"Kertészet",i:"🌱",t:["Fakapa","Vaskapa","Ezüstkapa","Aranykapa","Gyémántkapa"],e:"⛏️"},
+rend:{n:"Rendrakás",i:"🧸",t:["Szalmaseprű","Vasseprű","Ezüstseprű","Aranyseprű","Gyémántseprű"],e:"🧹"},
+konyha:{n:"Konyha",i:"🍳",t:["Fakanál","Vaskanál","Ezüstkanál","Aranykanál","Gyémántkanál"],e:"🥄"},
+vasar:{n:"Bevásárlás",i:"🛒",t:["Szatyor","Vászonkosár","Ezüstkosár","Aranykosár","Gyémántkosár"],e:"🧺"},
+allat:{n:"Állatgondozás",i:"🐾",t:["Zsineg póráz","Bőrpóráz","Ezüstpóráz","Aranypóráz","Gyémántpóráz"],e:"🦴"},
+mosas:{n:"Ruhák és mosás",i:"🫧",t:["Mosóteknő","Vascsipesz","Ezüstcsipesz","Aranycsipesz","Gyémántcsipesz"],e:"🧼"},
+tanul:{n:"Tanulás",i:"📚",t:["Faceruza","Vastoll","Ezüsttoll","Aranytoll","Gyémánttoll"],e:"✏️"}};
+const TC=["#a67c52","#9aa5ad","#c9d1d8","#ffcf4a","#6fe3ff"];
+const Q=[{id:1,n:"Kapálás",i:"⛏️",s:"kert",x:10},{id:2,n:"Locsolás, gyomlálás",i:"🚿",s:"kert",x:8},
+{id:3,n:"Szoba rendrakás",i:"🛏️",s:"rend",x:10},{id:4,n:"Játékok elpakolása",i:"🧸",s:"rend",x:6},
+{id:5,n:"Porszívózás, söprés",i:"🧹",s:"rend",x:10},{id:6,n:"Segítség főzésnél",i:"🥕",s:"konyha",x:10},
+{id:7,n:"Mosogatás, asztalterítés",i:"🍽️",s:"konyha",x:8},{id:8,n:"Bevásárlás, cipelés",i:"🛒",s:"vasar",x:10},
+{id:9,n:"Kutya, macska ellátása",i:"🐕",s:"allat",x:8},{id:10,n:"Ruhák teregetése, összehajtása",i:"👕",s:"mosas",x:8},
+{id:11,n:"Házi feladat",i:"📚",s:"tanul",x:12},{id:12,n:"Olvasás",i:"📖",s:"tanul",x:10},{id:13,n:"Gyakorlás (szorzótábla, hangszer)",i:"🧮",s:"tanul",x:10}];
+const allQ=()=>Q.concat(S.cq||[]);
+const PETS=[{id:"ham",n:"Hörcsög",e:"🐹",p:40},{id:"bun",n:"Nyuszi",e:"🐰",p:70},{id:"cat",n:"Cica",e:"🐱",p:90},{id:"dog",n:"Kutyus",e:"🐶",p:90},{id:"tur",n:"Teknős",e:"🐢",p:110},{id:"dra",n:"Sárkány",e:"🐲",p:200}];
+const DRW=[{id:"r1",n:"Közös fagyizás",e:"🍦",p:100},{id:"r2",n:"Extra 30 perc mesenézés",e:"📺",p:60},{id:"r3",n:"Te választod a vacsorát",e:"🍕",p:80},{id:"r4",n:"Mozizás",e:"🎬",p:250}];
+const rw=()=>S.rw||DRW,plv=x=>1+Math.floor(Math.sqrt((x||0)/20));
+const SHOP=[{id:"cap",n:"Sapka",e:"🧢",p:20},{id:"flower",n:"Virág",e:"🌸",p:25},{id:"scarf",n:"Sál",e:"🧣",p:30},
+{id:"glass",n:"Napszemüveg",e:"🕶️",p:40},{id:"cape",n:"Köpeny",e:"🦸",p:80},{id:"crown",n:"Korona",e:"👑",p:120},
+{id:"bow",n:"Masni",e:"🎀",p:25},{id:"mask",n:"Hősmaszk",e:"🎭",p:45},{id:"wiz",n:"Varázslókalap",e:"🧙",p:90},{id:"wings",n:"Szárnyak",e:"🦋",p:150}];
+const HC=["#3b2a20","#8a5a2b","#e2b34a","#d9482b","#7b5cd6"],SKN=["#fbd9bd","#f0b98d","#c68a5c","#8a5a3b"],CL=["#e8573c","#2e9e6b","#3d7be0","#f2a900","#a05bd6"];
+let S=load(),tab="home",draft=null,unlocked=false,dur=15,sel=null;
+function load(){try{return JSON.parse(localStorage.getItem("sh1"))||{kids:[],cur:0,pin:"1234"}}catch(e){return{kids:[],cur:0,pin:"1234"}}}
+function save(){try{localStorage.setItem("sh1",JSON.stringify(S))}catch(e){}}
+const K=()=>S.kids[S.cur];
+const lvl=x=>1+Math.floor(Math.sqrt((x||0)/25)),need=l=>l*l*25,tier=l=>Math.min(4,Math.floor((l-1)/2));
+function av(k,w){const h=k.hc,eq=k.eq||[];let hair="",back="";
+const base=`<path d="M28 45Q28 20 50 20Q72 20 72 45Q62 32 50 32Q38 32 28 45Z" fill="${h}"/>`;
+if(k.hs==0)hair=base;
+if(k.hs==1){back=`<rect x="25" y="38" width="11" height="44" rx="5" fill="${h}"/><rect x="64" y="38" width="11" height="44" rx="5" fill="${h}"/>`;hair=base}
+if(k.hs==2)hair=base+`<circle cx="50" cy="14" r="9" fill="${h}"/>`;
+if(k.hs==3)hair=`<path d="M27 46L28 22L38 32L45 16L52 31L61 17L66 32L74 24L73 46Q62 32 50 32Q38 32 27 46Z" fill="${h}"/>`;
+const cape=eq.includes("cape")?`<path d="M30 70L18 118L82 118L70 70Z" fill="#c23b5b"/>`:"";
+let acc="";
+if(eq.includes("scarf"))acc+=`<rect x="34" y="64" width="32" height="8" rx="4" fill="#ffcf4a"/>`;
+if(eq.includes("glass"))acc+=`<circle cx="42" cy="47" r="6" fill="#1118" stroke="#111" stroke-width="2"/><circle cx="58" cy="47" r="6" fill="#1118" stroke="#111" stroke-width="2"/><path d="M48 47h4" stroke="#111" stroke-width="2"/>`;
+if(eq.includes("cap"))acc+=`<path d="M27 37Q50 6 73 37Z" fill="#3d7be0"/><rect x="25" y="35" width="54" height="5" rx="2.5" fill="#2a5db8"/>`;
+if(eq.includes("crown"))acc+=`<path d="M32 26L35 8L43 18L50 6L57 18L65 8L68 26Z" fill="#ffcf4a" stroke="#c98f00" stroke-width="1.5"/>`;
+if(eq.includes("bow"))acc+=`<path d="M66 28L58 23L58 33Z M66 28L74 23L74 33Z" fill="#ff5c9a"/><circle cx="66" cy="28" r="2.5" fill="#d93a7a"/>`;
+if(eq.includes("mask"))acc+=`<rect x="30" y="41" width="40" height="11" rx="5" fill="#222"/><circle cx="42" cy="47" r="3" fill="#fff"/><circle cx="58" cy="47" r="3" fill="#fff"/>`;
+if(eq.includes("wiz"))acc+=`<path d="M26 36L50 2L74 36Z" fill="#6a3fc4"/><rect x="24" y="34" width="52" height="5" rx="2.5" fill="#4b2a96"/><circle cx="50" cy="20" r="3" fill="#ffcf4a"/>`;
+const wing=eq.includes("wings")?`<path d="M30 76Q2 54 8 98Q22 90 30 102Z M70 76Q98 54 92 98Q78 90 70 102Z" fill="#dff3ff" stroke="#8fc8ea" stroke-width="2"/>`:"";
+if(eq.includes("flower"))acc+=`<circle cx="66" cy="30" r="5" fill="#ff7bb0"/><circle cx="66" cy="30" r="2" fill="#ffe27a"/>`;
+return `<svg viewBox="0 0 100 120" width="${w}" height="${w*1.2}" style="flex:none">${wing}${cape}${back}<rect x="30" y="68" width="40" height="46" rx="14" fill="${k.cl}"/><circle cx="50" cy="46" r="22" fill="${k.sk}"/>${hair}<circle cx="42" cy="48" r="2.6" fill="#222"/><circle cx="58" cy="48" r="2.6" fill="#222"/><path d="M43 56Q50 62 57 56" stroke="#a33" stroke-width="2.2" fill="none" stroke-linecap="round"/>${acc}</svg>`}
+function toast(m){const d=document.createElement("div");d.className="toast";d.innerHTML=m;document.body.appendChild(d);setTimeout(()=>d.remove(),3800)}
+function nav(){return`<nav>${[["home","🏠","Kaland"],["q","📜","Feladatok"],["inv","🎒","Táska"],["shop","🛍️","Bolt"],["par","🔑","Szülő"]].map(a=>`<button class="${tab==a[0]?"on":""}" onclick="tab='${a[0]}';R()"><b>${a[1]}</b>${a[2]}</button>`).join("")}</nav>`}
+function creator(){const d=draft;
+const sw=(arr,key)=>arr.map((c,i)=>`<button class="sw ${d[key]==c||d[key]===i?"on":""}" style="background:${c}" onclick="draft.${key}=${typeof c=="string"?`'${c}'`:i};R()"></button>`).join("");
+return`<h2>Új hős készítése</h2><div class="card row" style="align-items:flex-start">${av(d,130)}<div class="g">
+<input id="nm" placeholder="Hős neve" value="${d.name}" oninput="draft.name=this.value">
+<p class="mut" style="margin:8px 0 4px">Nem</p><div class="row"><button class="alt ${d.g=="f"?"on":""}" onclick="draft.g='f';draft.hs=1;R()">Lány</button><button class="alt ${d.g=="m"?"on":""}" onclick="draft.g='m';draft.hs=0;R()">Fiú</button></div></div></div>
+<div class="card"><p class="mut" style="margin:0 0 6px">Frizura</p><div class="row" style="flex-wrap:wrap">${["Rövid","Hosszú","Kontyos","Tüskés"].map((n,i)=>`<button class="alt ${d.hs==i?"on":""}" onclick="draft.hs=${i};R()">${n}</button>`).join("")}</div>
+<p class="mut" style="margin:10px 0 6px">Hajszín</p><div class="row">${sw(HC,"hc")}</div>
+<p class="mut" style="margin:10px 0 6px">Bőrszín</p><div class="row">${sw(SKN,"sk")}</div>
+<p class="mut" style="margin:10px 0 6px">Ruha színe</p><div class="row">${sw(CL,"cl")}</div></div>
+<button style="width:100%" onclick="mk()">Indulhat a kaland!</button>${S.kids.length?`<button class="alt" style="width:100%;margin-top:8px" onclick="draft=null;R()">Mégsem</button>`:""}`}
+function mk(){const d=draft;if(!d.name.trim()){toast("Adj nevet a hősnek!");return}
+S.kids.push({...d,id:Date.now(),xp:{},coins:0,owned:[],eq:[],pend:[],news:[]});S.cur=S.kids.length-1;draft=null;tab="home";save();R()}
+function newDraft(){draft={name:"",g:"f",hs:1,hc:HC[1],sk:SKN[1],cl:CL[1]}}
+function R(){const a=document.getElementById("app");S.cq=S.cq||[];S.kids.forEach(k=>{k.pets=k.pets||[];k.pn=k.pn||{};k.px=k.px||{};k.claims=k.claims||[]});
+if(!S.kids.length&&!draft)newDraft();
+if(draft){a.innerHTML=creator();return}
+const k=K(),tot=Object.values(k.xp).reduce((a,b)=>a+b,0);
+let h=`<div class="top">${S.kids.map((x,i)=>`<button class="${i==S.cur?"on":""}" onclick="S.cur=${i};save();R()">${av(x,22)}${x.name}</button>`).join("")}<button onclick="newDraft();R()">＋</button></div>`;
+if(tab=="home"){
+h+=`<div class="card row">${av(k,110)}${petv(k)}<div class="g"><h2>${k.name}</h2><div class="mut">Hős szint ${1+Math.floor(Math.sqrt(tot/60))}</div><div class="row" style="margin-top:6px"><span class="chip">⭐ ${tot} XP</span><span class="chip">🪙 ${k.coins}</span></div></div></div>`;
+if(k.news.length)h+=`<div class="card" style="border-color:var(--acc)">${k.news.map(n=>`<div>${n}</div>`).join("")}<button style="margin-top:8px" onclick="K().news=[];save();R()">Szuper!</button></div>`;
+h+=`<h3 style="margin-top:14px">Képességeim</h3>`+Object.keys(SK).map(s=>{const x=k.xp[s]||0,l=lvl(x),lo=(l-1)*(l-1)*25,p=Math.round((x-lo)/(need(l)-lo)*100);
+return`<div class="card"><div class="row sp"><b>${SK[s].i} ${SK[s].n}</b><span class="chip">${l}. szint</span></div><div class="bar" style="margin:6px 0 2px"><i style="width:${p}%"></i></div><div class="mut">${x} / ${need(l)} XP · ${SK[s].t[tier(l)]}</div></div>`}).join("")}
+if(tab=="q"){
+h+=`<h2>Mai feladatok</h2><p class="mut">Válassz feladatot, mondd meg mennyi ideig segítettél, aztán a szülő jóváhagyja.</p>`;
+if(k.pend.length)h+=`<div class="card"><b>⏳ Jóváhagyásra vár</b>${k.pend.map(p=>`<div class="mut">${p.i} ${p.n} · ${p.m} perc · +${p.xp} XP</div>`).join("")}</div>`;
+h+=`<div class="row" style="flex-wrap:wrap;margin:8px 0">Idő: ${[5,15,30,60].map(m=>`<button class="alt ${dur==m?"on":""}" onclick="dur=${m};R()">${m} perc</button>`).join("")}</div>`;
+h+=allQ().map(q=>`<div class="card row"><span style="font-size:30px">${q.i}</span><div class="g"><b>${q.n}</b><div class="mut">${SK[q.s].n} · ${q.x+dur} XP</div></div><button onclick="rep(${q.id})">Kész!</button></div>`).join("")}
+if(tab=="inv"){
+h+=`<h2>Táska</h2><p class="mut">Az eszközök a képességeddel együtt fejlődnek.</p><div class="grid">${Object.keys(SK).map(s=>{const t=tier(lvl(k.xp[s]));return`<div class="tool" style="border-color:${TC[t]}"><div class="e">${SK[s].e}</div><b>${SK[s].t[t]}</b><div class="mut">${t==4?"Legendás!":"Következő: "+(t*2+3)+". szint"}</div></div>`}).join("")}</div>
+<h3 style="margin-top:14px">Ruhatár</h3>${k.owned.length?`<div class="grid">${k.owned.map(id=>{const it=SHOP.find(x=>x.id==id),on=k.eq.includes(id);return`<button class="alt ${on?"on":""}" onclick="eqp('${id}')"><div style="font-size:30px">${it.e}</div>${it.n}<div class="mut">${on?"Viseled":"Felveszem"}</div></button>`}).join("")}</div>`:`<p class="mut">Még üres. Nézz be a boltba!</p>`}`}
+if(tab=="shop"){
+h+=`<h2>Bolt</h2><p class="mut">Egyenleged: 🪙 ${k.coins}</p>`+SHOP.map(it=>{const has=k.owned.includes(it.id);return`<div class="card row"><span style="font-size:30px">${it.e}</span><div class="g"><b>${it.n}</b><div class="mut">🪙 ${it.p}</div></div><button ${has||k.coins<it.p?"disabled":""} onclick="buy('${it.id}')">${has?"Megvan":"Megveszem"}</button></div>`}).join("")+shopMore(k)}
+if(tab=="par"){
+if(!unlocked)h+=`<h2>Szülői rész</h2><div class="card"><p class="mut" style="margin-top:0">PIN-kód (alapból 1234):</p><input id="pin" type="password" inputmode="numeric" placeholder="PIN"><button style="margin-top:8px" onclick="if(pin.value==S.pin){unlocked=true;R()}else toast('Hibás PIN')">Belépés</button></div>`;
+else{const all=S.kids.flatMap(x=>x.pend.map(p=>({x,p})));
+h+=`<h2>Jóváhagyások</h2>`+(all.length?all.map(({x,p})=>`<div class="card"><b>${x.name}: ${p.i} ${p.n}</b><div class="mut">${p.m} perc · ${SK[p.s].n} · +${p.xp} XP</div><div class="row" style="margin-top:8px"><button onclick="ok(${x.id},${p.t})">Jóváhagyom ✔</button><button class="alt" onclick="no(${x.id},${p.t})">Elvetem</button></div></div>`).join(""):`<p class="mut">Nincs függő feladat.</p>`)+
+parExtra()+`<div class="card"><p class="mut" style="margin-top:0">PIN módosítása:</p><div class="row"><input id="np" inputmode="numeric" placeholder="Új PIN"><button onclick="if(np.value.length>=4){S.pin=np.value;save();toast('PIN elmentve')}else toast('Legalább 4 számjegy')">Mentés</button></div></div><button class="alt" onclick="unlocked=false;R()">Kilépés</button>`}}
+a.innerHTML=h+nav()}
+function rep(id){const q=allQ().find(x=>x.id==id),k=K();k.pend.push({t:Date.now(),n:q.n,i:q.i,s:q.s,m:dur,xp:q.x+dur});save();toast("Elküldve a szülőnek!<br>"+q.i+" "+q.n);R()}
+const fk=id=>S.kids.find(x=>x.id==id);
+function ok(id,t){const k=fk(id),p=k.pend.find(x=>x.t==t);k.pend=k.pend.filter(x=>x.t!=t);
+const b=lvl(k.xp[p.s]);p.xp+=k.pa?Math.min(5,plv(k.px[k.pa])-1):0;k.xp[p.s]=(k.xp[p.s]||0)+p.xp;k.coins+=Math.ceil(p.xp/2);
+if(k.pa){const pl=plv(k.px[k.pa]);k.px[k.pa]=(k.px[k.pa]||0)+Math.ceil(p.xp*.6);const nl=plv(k.px[k.pa]);if(nl>pl){k.news.push(`🐾 ${k.pn[k.pa]||"A társad"} szintet lépett: ${nl}. szint! Több bónusz XP jár.`);toast(`🐾 ${k.pn[k.pa]||"A társ"}: ${nl}. szint!`)}}
+const a=lvl(k.xp[p.s]);
+k.news.push(`⭐ +${p.xp} XP és 🪙 +${Math.ceil(p.xp/2)} a(z) „${p.n}” feladatért!`);
+if(a>b){k.news.push(`🎉 ${SK[p.s].n}: ${a}. szint!`+(tier(a)>tier(b)?` Új eszköz: <b>${SK[p.s].t[tier(a)]}</b> ${SK[p.s].e}`:""));toast(`🎉 ${k.name}: ${SK[p.s].n} ${a}. szint!`)}
+save();R()}
+function no(id,t){const k=fk(id);k.pend=k.pend.filter(x=>x.t!=t);save();R()}
+function buy(id){const k=K(),it=SHOP.find(x=>x.id==id);if(k.coins<it.p)return;k.coins-=it.p;k.owned.push(id);k.eq.push(id);save();toast(it.e+" "+it.n+" a tied!");R()}
+function eqp(id){const k=K();k.eq=k.eq.includes(id)?k.eq.filter(x=>x!=id):[...k.eq,id];save();R()}
+function petv(k){if(!k.pa)return"";const p=PETS.find(x=>x.id==k.pa),l=plv(k.px[k.pa]);return`<div style="text-align:center"><div style="font-size:${30+Math.min(l,5)*7}px;line-height:1.1">${p.e}</div><div class="mut" style="font-size:12px">${k.pn[p.id]||p.n}<br>${l}. szint</div></div>`}
+function shopMore(k){let h=`<h3 style="margin-top:16px">Kis társak</h3><p class="mut">A társ veled tanul: minden feladatnál fejlődik, és magasabb szinten bónusz XP-t hoz.</p><input id="pn" placeholder="Név a kis társnak" style="margin:6px 0">`;
+h+=PETS.map(p=>{const own=k.pets.includes(p.id);return`<div class="card row"><span style="font-size:34px">${p.e}</span><div class="g"><b>${p.n}</b><div class="mut">${own?"A tiéd: "+(k.pn[p.id]||p.n):"🪙 "+p.p}</div></div><button ${(own&&k.pa==p.id)||(!own&&k.coins<p.p)?"disabled":""} onclick="${own?`act('${p.id}')`:`adopt('${p.id}')`}">${own?(k.pa==p.id?"Veled van":"Mellém hívom"):"Befogadom"}</button></div>`}).join("");
+h+=`<h3 style="margin-top:16px">Jutalmak</h3><p class="mut">Váltsd be az érméidet valódi jutalomra!</p>`+rw().map(r=>`<div class="card row"><span style="font-size:30px">${r.e}</span><div class="g"><b>${r.n}</b><div class="mut">🪙 ${r.p}</div></div><button ${k.coins<r.p?"disabled":""} onclick="claim('${r.id}')">Kérem!</button></div>`).join("");return h}
+function adopt(id){const k=K(),p=PETS.find(x=>x.id==id);if(k.coins<p.p)return;const el=document.getElementById("pn");k.coins-=p.p;k.pets.push(id);k.pn[id]=(el&&el.value.trim())||p.n;k.px[id]=0;k.pa=id;save();toast(p.e+" "+k.pn[id]+" mostantól a társad!");R()}
+function act(id){K().pa=id;save();R()}
+function claim(id){const k=K(),r=rw().find(x=>x.id==id);if(!r||k.coins<r.p)return;k.coins-=r.p;k.claims.push({t:Date.now(),n:r.n,e:r.e,p:r.p});save();toast(r.e+" Elküldve a szülőnek: "+r.n);R()}
+function cdone(id,t,y){const k=fk(id),c=k.claims.find(x=>x.t==t);k.claims=k.claims.filter(x=>x.t!=t);if(!y)k.coins+=c.p;save();R()}
+function addq(){const n=qn.value.trim();if(!n){toast("Írd be a feladat nevét");return}const s=qs.value;S.cq.push({id:Date.now(),n,i:SK[s].e,s,x:Math.max(1,+qx.value||10)});save();R()}
+function delq(id){S.cq=S.cq.filter(q=>q.id!=id);save();R()}
+function addr(){const n=rn.value.trim();if(!n){toast("Írd be a jutalom nevét");return}S.rw=rw().concat([{id:"r"+Date.now(),n,e:re.value||"🎁",p:Math.max(1,+rp.value||50)}]);save();R()}
+function delr(id){S.rw=rw().filter(r=>r.id!=id);save();R()}
+function parExtra(){let h="";const cl=S.kids.flatMap(x=>x.claims.map(c=>({x,c})));
+if(cl.length)h+=`<h3 style="margin-top:14px">Jutalom-kérések</h3>`+cl.map(({x,c})=>`<div class="card"><b>${x.name}: ${c.e} ${c.n}</b><div class="row" style="margin-top:8px"><button onclick="cdone(${x.id},${c.t},1)">Átadtam ✔</button><button class="alt" onclick="cdone(${x.id},${c.t},0)">Érmék vissza</button></div></div>`).join("");
+h+=`<h3 style="margin-top:14px">Saját feladat felvétele</h3><div class="card"><input id="qn" placeholder="Feladat neve (pl. Matek házi)"><div class="row" style="margin-top:8px"><select id="qs" style="flex:1">${Object.keys(SK).map(s=>`<option value="${s}">${SK[s].i} ${SK[s].n}</option>`).join("")}</select><input id="qx" type="number" value="10" min="1" style="width:80px"></div><button style="margin-top:8px" onclick="addq()">Hozzáadás</button>${S.cq.map(q=>`<div class="row sp mut" style="margin-top:6px"><span>${q.i} ${q.n} · ${q.x} XP</span><button class="alt" onclick="delq(${q.id})">✕</button></div>`).join("")}</div>`;
+h+=`<h3 style="margin-top:14px">Jutalmak kezelése</h3><div class="card"><input id="rn" placeholder="Jutalom (pl. Fagyizás)"><div class="row" style="margin-top:8px"><input id="re" value="🍦" style="width:70px"><input id="rp" type="number" value="100" style="width:90px"><button onclick="addr()">Hozzáadás</button></div>${rw().map(r=>`<div class="row sp mut" style="margin-top:6px"><span>${r.e} ${r.n} · 🪙 ${r.p}</span><button class="alt" onclick="delr('${r.id}')">✕</button></div>`).join("")}</div>`;return h}
+R();
+</script></body></html>
