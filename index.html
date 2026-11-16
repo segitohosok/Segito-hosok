@@ -48,8 +48,8 @@ const Q=[{id:2,n:"Locsolás, gyomlálás",i:"🚿",s:"kert",x:8},
 {id:9,n:"Kutya, macska ellátása",i:"🐕",s:"allat",x:8},{id:10,n:"Ruhák teregetése, összehajtása",i:"👕",s:"mosas",x:8},
 {id:11,n:"Házi feladat",i:"📚",s:"tanul",x:12},{id:12,n:"Olvasás",i:"📖",s:"tanul",x:10},{id:13,n:"Gyakorlás (szorzótábla, hangszer)",i:"🧮",s:"tanul",x:10}];
 const allQ=()=>Q.concat(S.cq||[]);
-const PETS=[{id:"ham",n:"Hörcsög",e:"🐹",p:40},{id:"bun",n:"Nyuszi",e:"🐰",p:70},{id:"cat",n:"Cica",e:"🐱",p:90},{id:"dog",n:"Kutyus",e:"🐶",p:90},{id:"tur",n:"Teknős",e:"🐢",p:110},{id:"dra",n:"Sárkány",e:"🐲",p:200}];
-const DRW=[{id:"r1",n:"Közös fagyizás",e:"🍦",p:100},{id:"r2",n:"Extra 30 perc mesenézés",e:"📺",p:60},{id:"r3",n:"Te választod a vacsorát",e:"🍕",p:80},{id:"r4",n:"Mozizás",e:"🎬",p:250}];
+const PETS=[{id:"ham",n:"Hörcsög",e:"🐹",p:40},{id:"bun",n:"Nyuszi",e:"🐰",p:70},{id:"cat",n:"Cica",e:"🐱",p:90},{id:"dog",n:"Kutyus",e:"🐶",p:100},{id:"tur",n:"Teknős",e:"🐢",p:150},{id:"dra",n:"Sárkány",e:"🐲",p:400}];
+const DRW=[{id:"r1",n:"Extra 30 perc Telefonozás",e:"📱",p:5000},{id:"r2",n:"Extra 30 perc mesenézés",e:"📺",p:5000},{id:"r3",n:"Közös fagyizás",e:"🍦",p:20000}{id:"r4",n:"Pizzázás",e:"🍕",p:100000}{id:"r5",n:"MEKI",e:"🍔",p:100000},{id:"r6",n:"Mozizás",e:"🎬",p:10000}];
 const rw=()=>S.rw||DRW,plv=x=>1+Math.floor(Math.sqrt((x||0)/20));
 const SHOP=[{id:"cap",n:"Sapka",e:"🧢",p:20},{id:"flower",n:"Virág",e:"🌸",p:25},{id:"scarf",n:"Sál",e:"🧣",p:30},
 {id:"glass",n:"Napszemüveg",e:"🕶️",p:40},{id:"cape",n:"Köpeny",e:"🦸",p:80},{id:"crown",n:"Korona",e:"👑",p:120},
