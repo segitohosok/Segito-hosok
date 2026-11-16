@@ -55,7 +55,7 @@ const DRW=[{id:"r1",n:"Extra 30 perc Telefonozás",e:"📱",p:5000},{id:"r2",n:"
 const rw=()=>S.rw||DRW,plv=x=>1+Math.floor(Math.sqrt((x||0)/20));
 const SHOP=[{id:"cap",n:"Sapka",e:"🧢",p:20},{id:"flower",n:"Virág",e:"🌸",p:25},{id:"bow",n:"Masni",e:"🎀",p:25},{id:"scarf",n:"Sál",e:"🧣",p:30},
 {id:"glass",n:"Napszemüveg",e:"🕶️",p:40},{id:"mask",n:"Hősmaszk",e:"🎭",p:45},{id:"cape",n:"Köpeny",e:"🦸",p:80},{id:"wiz",n:"Varázslókalap",e:"🧙",p:90},
-{id:"wings",n:"Szárnyak",e:"🦋",p:100},{id:"crown",n:"Korona",e:"👑",p:150}];
+{id:"wings",n:"Szárnyak",e:"🦋",p:100},{id:"crown",n:"Korona",e:"👑",p:150},{id:"pirate",n:"Kalózkalap",e:"🏴‍☠️",p:3}];
 const HC=["#3b2a20","#8a5a2b","#e2b34a","#d9482b","#7b5cd6"],SKN=["#fbd9bd","#f0b98d","#c68a5c","#8a5a3b"],CL=["#e8573c","#2e9e6b","#3d7be0","#f2a900","#a05bd6"];
 let S=load(),tab="home",draft=null,unlocked=false,dur=15,sel=null;
 function load(){try{return JSON.parse(localStorage.getItem("sh1"))||{kids:[],cur:0,pin:null}}catch(e){return{kids:[],cur:0,pin:null}}}
@@ -74,6 +74,7 @@ if(eq.includes("scarf"))acc+=`<rect x="34" y="64" width="32" height="8" rx="4" f
 if(eq.includes("glass"))acc+=`<circle cx="42" cy="47" r="6" fill="#1118" stroke="#111" stroke-width="2"/><circle cx="58" cy="47" r="6" fill="#1118" stroke="#111" stroke-width="2"/><path d="M48 47h4" stroke="#111" stroke-width="2"/>`;
 if(eq.includes("cap"))acc+=`<path d="M27 37Q50 6 73 37Z" fill="#3d7be0"/><rect x="25" y="35" width="54" height="5" rx="2.5" fill="#2a5db8"/>`;
 if(eq.includes("crown"))acc+=`<path d="M32 26L35 8L43 18L50 6L57 18L65 8L68 26Z" fill="#ffcf4a" stroke="#c98f00" stroke-width="1.5"/>`;
+if(eq.includes("pirate"))acc+=`<path d="M26 36Q50 8 74 36Z" fill="#1d1d1d"/><rect x="24" y="34" width="52" height="5" rx="2.5" fill="#333"/><circle cx="50" cy="26" r="3.5" fill="#fff"/>`;
 if(eq.includes("bow"))acc+=`<path d="M66 28L58 23L58 33Z M66 28L74 23L74 33Z" fill="#ff5c9a"/><circle cx="66" cy="28" r="2.5" fill="#d93a7a"/>`;
 if(eq.includes("mask"))acc+=`<rect x="30" y="41" width="40" height="11" rx="5" fill="#222"/><circle cx="42" cy="47" r="3" fill="#fff"/><circle cx="58" cy="47" r="3" fill="#fff"/>`;
 if(eq.includes("wiz"))acc+=`<path d="M26 36L50 2L74 36Z" fill="#6a3fc4"/><rect x="24" y="34" width="52" height="5" rx="2.5" fill="#4b2a96"/><circle cx="50" cy="20" r="3" fill="#ffcf4a"/>`;
