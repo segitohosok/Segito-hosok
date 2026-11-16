@@ -9,3 +9,4 @@ Megnyitás: https://segitohosok.github.io/Segito-hosok/
 Első indításkor a szülő állít be PIN-kódot. Regisztráció nincs, az adatok csak az adott eszközön, a böngészőben tárolódnak.
 
 Kipróbálás: 3 hétig használjátok, és írjátok meg, mi tetszett, mi hiányzik!
+<img width="621" height="996" alt="image" src="https://github.com/user-attachments/assets/eeabf0e2-813e-4060-be46-34e2ca284420" />
