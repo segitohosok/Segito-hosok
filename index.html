@@ -55,7 +55,7 @@ const DRW=[{id:"r1",n:"Extra 30 perc Telefonozás",e:"📱",p:5000},{id:"r2",n:"
 const rw=()=>S.rw||DRW,plv=x=>1+Math.floor(Math.sqrt((x||0)/20));
 const SHOP=[{id:"cap",n:"Sapka",e:"🧢",p:20},{id:"flower",n:"Virág",e:"🌸",p:25},{id:"bow",n:"Masni",e:"🎀",p:25},{id:"scarf",n:"Sál",e:"🧣",p:30},
 {id:"glass",n:"Napszemüveg",e:"🕶️",p:40},{id:"mask",n:"Hősmaszk",e:"🎭",p:45},{id:"cape",n:"Köpeny",e:"🦸",p:80},{id:"wiz",n:"Varázslókalap",e:"🧙",p:90},
-{id:"wings",n:"Szárnyak",e:"🦋",p:100},{id:"band",n:"Fejpánt",e:"🥋",p:100},{id:"tie",n:"Csokornyakkendő",e:"🤵",p:110},{id:"ears",n:"Macifül",e:"🐻",p:120},{id:"crown",n:"Korona",e:"👑",p:150},{id:"pack",n:"Hátizsák",e:"🎒",p:275},{id:"halo",n:"Glória",e:"😇",p:300},{id:"pirate",n:"Kalózkalap",e:"🏴‍☠️",p:350},{id:"horn",n:"Unikornisszarv",e:"🦄",p:500},{id:"helm",n:"Lovagsisak",e:"🛡️",p:550}];
+{id:"wings",n:"Szárnyak",e:"🦋",p:100},{id:"crown",n:"Korona",e:"👑",p:150}];
 const HC=["#3b2a20","#8a5a2b","#e2b34a","#d9482b","#7b5cd6"],SKN=["#fbd9bd","#f0b98d","#c68a5c","#8a5a3b"],CL=["#e8573c","#2e9e6b","#3d7be0","#f2a900","#a05bd6"];
 let S=load(),tab="home",draft=null,unlocked=false,dur=15,sel=null;
 function load(){try{return JSON.parse(localStorage.getItem("sh1"))||{kids:[],cur:0,pin:null}}catch(e){return{kids:[],cur:0,pin:null}}}
