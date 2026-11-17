@@ -47,12 +47,11 @@ const Q=[{id:2,n:"Locsolás, gyomlálás",i:"🚿",s:"kert",x:8},
 {id:5,n:"Porszívózás, söprés",i:"🧹",s:"rend",x:10},{id:6,n:"Segítség főzésnél",i:"🥕",s:"konyha",x:10},
 {id:7,n:"Mosogatás, asztalterítés",i:"🍽️",s:"konyha",x:8},{id:8,n:"Bevásárlás, cipelés",i:"🛒",s:"vasar",x:10},
 {id:9,n:"Kutya, macska ellátása",i:"🐕",s:"allat",x:8},{id:10,n:"Ruhák teregetése, összehajtása",i:"👕",s:"mosas",x:8},
-{id:11,n:"Házi feladat",i:"📚",s:"tanul",x:12},{id:12,n:"Olvasás",i:"📖",s:"tanul",x:10},{id:13,n:"Gyakorlás (szorzótábla, hangszer)",i:"🧮",s:"tanul",x:10},
-{id:14,n:"Fogmosás, fürdés",i:"🪥",s:"onell",x:1},{id:15,n:"Szófogadás, viselkedés",i:"😇",s:"onell",x:1}];
+{id:11,n:"Házi feladat",i:"📚",s:"tanul",x:12},{id:12,n:"Olvasás",i:"📖",s:"tanul",x:10},{id:13,n:"Gyakorlás (szorzótábla, hangszer)",i:"🧮",s:"tanul",x:10},{id:14,n:"Fogmosás, fürdés",i:"🪥",s:"onell",x:1}];
 const allQ=()=>Q.concat(S.cq||[]);
 const PETS=[{id:"ham",n:"Hörcsög",e:"🐹",p:40},{id:"bun",n:"Nyuszi",e:"🐰",p:70},{id:"cat",n:"Cica",e:"🐱",p:90},{id:"dog",n:"Kutyus",e:"🐶",p:100},{id:"tur",n:"Teknős",e:"🐢",p:130},{id:"dra",n:"Sárkány",e:"🐲",p:400}];
 const DRW=[{id:"r1",n:"Extra 30 perc Telefonozás",e:"📱",p:5000},{id:"r2",n:"Extra 30 perc mesenézés",e:"📺",p:5000},{id:"r3",n:"Közös fagyizás",e:"🍦",p:20000},{id:"r4",n:"MEKI",e:"🍔",p:100000},{id:"r5",n:"Mozizás",e:"🎬",p:100000},{id:"r6",n:"Pizzázás",e:"🍕",p:100000}];
-const rw=()=>S.rw||DRW,plv=x=>1+Math.floor(Math.sqrt((x||0)/20));
+const rw=()=>(S.rw||DRW).slice().sort((a,b)=>a.p-b.p),plv=x=>1+Math.floor(Math.sqrt((x||0)/20));
 const SHOP=[{id:"cap",n:"Sapka",e:"🧢",p:20},{id:"flower",n:"Virág",e:"🌸",p:25},{id:"bow",n:"Masni",e:"🎀",p:25},{id:"scarf",n:"Sál",e:"🧣",p:30},
 {id:"glass",n:"Napszemüveg",e:"🕶️",p:40},{id:"mask",n:"Hősmaszk",e:"🎭",p:45},{id:"cape",n:"Köpeny",e:"🦸",p:80},{id:"wiz",n:"Varázskalap",e:"🧙",p:90},
 {id:"wings",n:"Szárnyak",e:"🦋",p:100},{id:"crown",n:"Korona",e:"👑",p:150},{id:"pirate",n:"Kalózkalap",e:"🏴‍☠️",p:180},{id:"halo",n:"Glória",e:"😇",p:200},{id:"horn",n:"Unikornisszarv",e:"🦄",p:300},{id:"helm",n:"Lovagsisak",e:"🛡️",p:300}];
@@ -74,13 +73,13 @@ if(eq.includes("scarf"))acc+=`<rect x="34" y="64" width="32" height="8" rx="4" f
 if(eq.includes("glass"))acc+=`<circle cx="42" cy="47" r="6" fill="#1118" stroke="#111" stroke-width="2"/><circle cx="58" cy="47" r="6" fill="#1118" stroke="#111" stroke-width="2"/><path d="M48 47h4" stroke="#111" stroke-width="2"/>`;
 if(eq.includes("cap"))acc+=`<path d="M27 37Q50 6 73 37Z" fill="#3d7be0"/><rect x="25" y="35" width="54" height="5" rx="2.5" fill="#2a5db8"/>`;
 if(eq.includes("crown"))acc+=`<path d="M32 26L35 8L43 18L50 6L57 18L65 8L68 26Z" fill="#ffcf4a" stroke="#c98f00" stroke-width="1.5"/>`;
-if(eq.includes("pirate"))acc+=`<path d="M26 36Q50 8 74 36Z" fill="#1d1d1d"/><rect x="24" y="34" width="52" height="5" rx="2.5" fill="#333"/><circle cx="50" cy="26" r="3.5" fill="#fff"/>`;
-if(eq.includes("halo"))acc+=`<ellipse cx="50" cy="12" rx="16" ry="4" fill="none" stroke="#ffd34a" stroke-width="3"/>`;
-if(eq.includes("horn"))acc+=`<path d="M46 26L50 4L54 26Z" fill="#ff9ad5" stroke="#d96bb0" stroke-width="1.5"/>`;
-if(eq.includes("helm"))acc+=`<path d="M27 38Q27 14 50 14Q73 14 73 38Z" fill="#aab4bd"/><rect x="26" y="34" width="48" height="6" rx="3" fill="#7d8992"/><path d="M50 14V6" stroke="#e8573c" stroke-width="5" stroke-linecap="round"/>`;
 if(eq.includes("bow"))acc+=`<path d="M66 28L58 23L58 33Z M66 28L74 23L74 33Z" fill="#ff5c9a"/><circle cx="66" cy="28" r="2.5" fill="#d93a7a"/>`;
 if(eq.includes("mask"))acc+=`<rect x="30" y="41" width="40" height="11" rx="5" fill="#222"/><circle cx="42" cy="47" r="3" fill="#fff"/><circle cx="58" cy="47" r="3" fill="#fff"/>`;
 if(eq.includes("wiz"))acc+=`<path d="M26 36L50 2L74 36Z" fill="#6a3fc4"/><rect x="24" y="34" width="52" height="5" rx="2.5" fill="#4b2a96"/><circle cx="50" cy="20" r="3" fill="#ffcf4a"/>`;
+if(eq.includes("halo"))acc+=`<ellipse cx="50" cy="12" rx="16" ry="4" fill="none" stroke="#ffd34a" stroke-width="3"/>`;
+if(eq.includes("pirate"))acc+=`<path d="M26 36Q50 8 74 36Z" fill="#1d1d1d"/><rect x="24" y="34" width="52" height="5" rx="2.5" fill="#333"/><circle cx="50" cy="26" r="3.5" fill="#fff"/>`;
+if(eq.includes("horn"))acc+=`<path d="M46 26L50 4L54 26Z" fill="#ff9ad5" stroke="#d96bb0" stroke-width="1.5"/>`;
+if(eq.includes("helm"))acc+=`<path d="M27 38Q27 14 50 14Q73 14 73 38Z" fill="#aab4bd"/><rect x="26" y="34" width="48" height="6" rx="3" fill="#7d8992"/><path d="M50 14V6" stroke="#e8573c" stroke-width="5" stroke-linecap="round"/>`;
 const wing=eq.includes("wings")?`<path d="M30 76Q2 54 8 98Q22 90 30 102Z M70 76Q98 54 92 98Q78 90 70 102Z" fill="#dff3ff" stroke="#8fc8ea" stroke-width="2"/>`:"";
 if(eq.includes("flower"))acc+=`<circle cx="66" cy="30" r="5" fill="#ff7bb0"/><circle cx="66" cy="30" r="2" fill="#ffe27a"/>`;
 return `<svg viewBox="0 0 100 120" width="${w}" height="${w*1.2}" style="flex:none">${wing}${cape}${back}<rect x="30" y="68" width="40" height="46" rx="14" fill="${k.cl}"/><circle cx="50" cy="46" r="22" fill="${k.sk}"/>${hair}<circle cx="42" cy="48" r="2.6" fill="#222"/><circle cx="58" cy="48" r="2.6" fill="#222"/><path d="M43 56Q50 62 57 56" stroke="#a33" stroke-width="2.2" fill="none" stroke-linecap="round"/>${acc}</svg>`}
@@ -128,18 +127,18 @@ a.innerHTML=h+nav()}
 function rep(id){const q=allQ().find(x=>x.id==id),k=K();k.pend.push({t:Date.now(),n:q.n,i:q.i,s:q.s,m:dur,xp:q.x+dur});save();toast("Elküldve a szülőnek!<br>"+q.i+" "+q.n);R()}
 const fk=id=>S.kids.find(x=>x.id==id);
 function ok(id,t){const k=fk(id),p=k.pend.find(x=>x.t==t);k.pend=k.pend.filter(x=>x.t!=t);
-const b=lvl(k.xp[p.s]);p.xp+=k.pa?Math.min(5,plv(k.px[k.pa])-1):0;k.xp[p.s]=(k.xp[p.s]||0)+p.xp;k.coins+=Math.ceil(p.xp/2);
+const b=lvl(k.xp[p.s]);p.xp+=k.pa?Math.min(5,plv(k.px[k.pa])-1):0;k.xp[p.s]=(k.xp[p.s]||0)+p.xp;const cn=Math.ceil(p.xp/2)*(k.pa=="dra"?2:1);k.coins+=cn;
 if(k.pa){const pl=plv(k.px[k.pa]);k.px[k.pa]=(k.px[k.pa]||0)+Math.ceil(p.xp*.6);const nl=plv(k.px[k.pa]);if(nl>pl){k.news.push(`🐾 ${k.pn[k.pa]||"A társad"} szintet lépett: ${nl}. szint! Több bónusz XP jár.`);toast(`🐾 ${k.pn[k.pa]||"A társ"}: ${nl}. szint!`)}}
 const a=lvl(k.xp[p.s]);
-k.news.push(`⭐ +${p.xp} XP és 🪙 +${Math.ceil(p.xp/2)} a(z) „${p.n}” feladatért!`);
+k.news.push(`⭐ +${p.xp} XP és 🪙 +${cn} a(z) „${p.n}” feladatért!`);
 if(a>b){k.news.push(`🎉 ${SK[p.s].n}: ${a}. szint!`+(tier(a)>tier(b)?` Új eszköz: <b>${SK[p.s].t[tier(a)]}</b> ${SK[p.s].e}`:""));toast(`🎉 ${k.name}: ${SK[p.s].n} ${a}. szint!`)}
 save();R()}
 function no(id,t){const k=fk(id);k.pend=k.pend.filter(x=>x.t!=t);save();R()}
 function buy(id){const k=K(),it=SHOP.find(x=>x.id==id);if(k.coins<it.p)return;k.coins-=it.p;k.owned.push(id);k.eq.push(id);save();toast(it.e+" "+it.n+" a tied!");R()}
 function eqp(id){const k=K();k.eq=k.eq.includes(id)?k.eq.filter(x=>x!=id):[...k.eq,id];save();R()}
-function petv(k){if(!k.pa)return"";const p=PETS.find(x=>x.id==k.pa),l=plv(k.px[k.pa]);return`<div style="text-align:center"><div style="font-size:${30+Math.min(l,5)*7}px;line-height:1.1">${p.e}</div><div class="mut" style="font-size:12px">${k.pn[p.id]||p.n}<br>${l}. szint</div></div>`}
-function shopMore(k){let h=`<h3 style="margin-top:16px">Kis társak</h3><p class="mut">A társ veled tanul: minden feladatnál fejlődik, és magasabb szinten bónusz XP-t hoz.</p><input id="pn" placeholder="Név a kis társnak" style="margin:6px 0">`;
-h+=PETS.map(p=>{const own=k.pets.includes(p.id);return`<div class="card row"><span style="font-size:34px">${p.e}</span><div class="g"><b>${p.n}</b><div class="mut">${own?"A tiéd: "+(k.pn[p.id]||p.n):"🪙 "+p.p}</div></div><button ${(own&&k.pa==p.id)||(!own&&k.coins<p.p)?"disabled":""} onclick="${own?`act('${p.id}')`:`adopt('${p.id}')`}">${own?(k.pa==p.id?"Veled van":"Mellém hívom"):"Befogadom"}</button></div>`}).join("");
+function petv(k){if(!k.pa)return"";const p=PETS.find(x=>x.id==k.pa),l=plv(k.px[k.pa]);return`<div style="text-align:center"><div style="font-size:${30+Math.min(l,5)*7}px;line-height:1.1">${p.e}</div><div class="mut" style="font-size:12px">${k.pn[p.id]||p.n}<br>${l}. szint${p.id=="dra"?"<br><b>🪙 2x</b>":""}</div></div>`}
+function shopMore(k){let h=`<h3 style="margin-top:16px">Kis társak</h3><p class="mut">Az aktív társ (akit magad mellé hívtál) a jóváhagyott feladatokból fejlődik. A 2. szinttől szintenként +1 bónusz XP jár minden feladatért, legfeljebb +5 (a 6. szinten), és ennek megfelelően több érme is. A 🐲 Sárkány társ ráadásul 2x érmét hoz minden feladatért, amíg melletted van.</p><input id="pn" placeholder="Név a kis társnak" style="margin:6px 0">`;
+h+=PETS.map(p=>{const own=k.pets.includes(p.id);return`<div class="card row"><span style="font-size:34px">${p.e}</span><div class="g"><b>${p.n}${p.id=="dra"?" 🪙 2x":""}</b><div class="mut">${own?"A tiéd: "+(k.pn[p.id]||p.n)+" · "+plv(k.px[p.id])+". szint · bónusz: +"+Math.min(5,plv(k.px[p.id])-1)+" XP"+(p.id=="dra"?" · 2x érme":""):"🪙 "+p.p}</div></div><button ${(own&&k.pa==p.id)||(!own&&k.coins<p.p)?"disabled":""} onclick="${own?`act('${p.id}')`:`adopt('${p.id}')`}">${own?(k.pa==p.id?"Veled van":"Mellém hívom"):"Befogadom"}</button></div>`}).join("");
 h+=`<h3 style="margin-top:16px">Jutalmak</h3><p class="mut">Váltsd be az érméidet valódi jutalomra!</p>`+rw().map(r=>`<div class="card row"><span style="font-size:30px">${r.e}</span><div class="g"><b>${r.n}</b><div class="mut">🪙 ${r.p}</div></div><button ${k.coins<r.p?"disabled":""} onclick="claim('${r.id}')">Kérem!</button></div>`).join("");return h}
 function adopt(id){const k=K(),p=PETS.find(x=>x.id==id);if(k.coins<p.p)return;const el=document.getElementById("pn");k.coins-=p.p;k.pets.push(id);k.pn[id]=(el&&el.value.trim())||p.n;k.px[id]=0;k.pa=id;save();toast(p.e+" "+k.pn[id]+" mostantól a társad!");R()}
 function act(id){K().pa=id;save();R()}
