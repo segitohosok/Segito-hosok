@@ -1,7 +1,7 @@
 # Segítő Hősök
 
 Ingyenes játék családoknak: a gyerekek a valódi segítségükért (rendrakás, bevásárlás, tanulás) XP-t kapnak, képességeik szintet lépnek, az eszközeik fejlődnek (fakapától a gyémántkapáig). Saját hőst készíthetnek, kis társat fogadhatnak be, a gyűjtött érmékért pedig valódi jutalmat (például fagyizást) válthatnak be.
-
+Kis társak: az aktív társ a feladatokból fejlődik, és a 2. szinttől szintenként +1, legfeljebb +5 bónusz XP-t (és érmét) hoz.
 A szülő PIN-kóddal hagyja jóvá a elvégzett feladatot, és saját feladatokat, jutalmakat is felvehet.
 
 Megnyitás: https://segitohosok.github.io/Segito-hosok/
