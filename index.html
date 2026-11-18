@@ -56,7 +56,7 @@ const rw=()=>(S.rw||DRW).slice().sort((a,b)=>a.p-b.p),plv=x=>1+Math.floor(Math.s
 const SHOP=[{id:"cap",n:"Sapka",e:"🧢",p:20},{id:"flower",n:"Virág",e:"🌸",p:25},{id:"bow",n:"Masni",e:"🎀",p:25},{id:"scarf",n:"Sál",e:"🧣",p:30},
 {id:"glass",n:"Napszemüveg",e:"🕶️",p:40},{id:"mask",n:"Hősmaszk",e:"🎭",p:45},{id:"cape",n:"Köpeny",e:"🦸",p:80},{id:"wiz",n:"Varázskalap",e:"🧙",p:90},
 {id:"wings",n:"Szárnyak",e:"🦋",p:100},{id:"crown",n:"Korona",e:"👑",p:150},{id:"pirate",n:"Kalózkalap",e:"🏴‍☠️",p:180},{id:"halo",n:"Glória",e:"😇",p:200},{id:"horn",n:"Unikornisszarv",e:"🦄",p:300},{id:"helm",n:"Lovagsisak",e:"🛡️",p:300}];
-const HC=["#3b2a20","#8a5a2b","#e2b34a","#d9482b","#7b5cd6"],SKN=["#fbd9bd","#f0b98d","#c68a5c","#8a5a3b"],CL=["#e8573c","#2e9e6b","#3d7be0","#f2a900","#a05bd6"];
+const HC=["#3b2a20","#8a5a2b","#e2b34a","#d9482b","#7b5cd6","#111111","#b8c0c8","#f3e3a0","#ff8fc4","#3d7be0","#39c9c0","#3fa34d"],SKN=["#fff0e3","#fbd9bd","#f0b98d","#c68a5c","#8a5a3b","#5b3a29"],CL=["#e8573c","#2e9e6b","#3d7be0","#f2a900","#a05bd6","#ff7bb0","#2bb3b3","#ff8a2b","#f4f4f0","#2b2b2b","#7fc4ff","#8c1f3a"];
 let S=load(),tab="home",draft=null,unlocked=false,dur=15,sel=null;
 function load(){try{return JSON.parse(localStorage.getItem("sh1"))||{kids:[],cur:0,pin:null}}catch(e){return{kids:[],cur:0,pin:null}}}
 function save(){try{localStorage.setItem("sh1",JSON.stringify(S))}catch(e){}}
@@ -73,6 +73,12 @@ if(k.hs==0)hair=base;
 if(k.hs==1){back=`<rect x="25" y="38" width="11" height="44" rx="5" fill="${h}"/><rect x="64" y="38" width="11" height="44" rx="5" fill="${h}"/>`;hair=base}
 if(k.hs==2)hair=base+`<circle cx="50" cy="14" r="9" fill="${h}"/>`;
 if(k.hs==3)hair=`<path d="M27 46L28 22L38 32L45 16L52 31L61 17L66 32L74 24L73 46Q62 32 50 32Q38 32 27 46Z" fill="${h}"/>`;
+if(k.hs==4){back=`<path d="M66 28Q94 22 90 62Q80 52 72 46Z" fill="${h}"/>`;hair=base+`<circle cx="68" cy="29" r="3.5" fill="#e8573c"/>`}
+if(k.hs==5){back=`<path d="M30 40Q12 48 16 78Q24 66 32 52Z M70 40Q88 48 84 78Q76 66 68 52Z" fill="${h}"/>`;hair=base+`<circle cx="30" cy="41" r="3.5" fill="#ff5c9a"/><circle cx="70" cy="41" r="3.5" fill="#ff5c9a"/>`}
+if(k.hs==6)hair=base+`<g fill="${h}"><circle cx="32" cy="30" r="8"/><circle cx="42" cy="22" r="8"/><circle cx="54" cy="21" r="8"/><circle cx="65" cy="27" r="8"/><circle cx="72" cy="39" r="7"/><circle cx="28" cy="40" r="7"/></g>`;
+if(k.hs==7){back=`<path d="M26 38Q22 72 36 72L38 44Z M74 38Q78 72 64 72L62 44Z" fill="${h}"/>`;hair=base+`<path d="M30 36Q50 28 70 36L70 41Q50 34 30 41Z" fill="${h}"/>`}
+if(k.hs==8)hair=`<path d="M28 46Q27 20 50 19Q73 20 72 44Q68 34 58 30Q46 40 28 46Z" fill="${h}"/>`;
+if(k.hs==9)hair=`<path d="M30 36Q50 22 70 36Q50 30 30 36Z" fill="${h}" opacity=".9"/>`;
 const cape=eq.includes("cape")?`<path d="M30 70L18 118L82 118L70 70Z" fill="#c23b5b"/>`:"";
 let acc="";
 if(eq.includes("scarf"))acc+=`<rect x="34" y="64" width="32" height="8" rx="4" fill="#ffcf4a"/>`;
@@ -94,17 +100,17 @@ function toast(m){const d=document.createElement("div");d.className="toast";d.in
 function nav(){return`<nav>${[["home","🏠","Kaland"],["q","📜","Feladatok"],["inv","🎒","Táska"],["shop","🛍️","Bolt"],["par","🔑","Szülő"]].map(a=>`<button class="${tab==a[0]?"on":""}" onclick="tab='${a[0]}';R()"><b>${a[1]}</b>${a[2]}</button>`).join("")}</nav>`}
 function creator(){const d=draft;
 const sw=(arr,key)=>arr.map((c,i)=>`<button class="sw ${d[key]==c||d[key]===i?"on":""}" style="background:${c}" onclick="draft.${key}=${typeof c=="string"?`'${c}'`:i};R()"></button>`).join("");
-return`<h2>Új hős készítése</h2><div class="card row" style="align-items:flex-start">${av(d,130)}<div class="g">
-<input id="nm" placeholder="Hős neve" value="${d.name}" oninput="draft.name=this.value">
-<p class="mut" style="margin:8px 0 4px">Nem</p><div class="row"><button class="alt ${d.g=="f"?"on":""}" onclick="draft.g='f';draft.hs=1;R()">Lány</button><button class="alt ${d.g=="m"?"on":""}" onclick="draft.g='m';draft.hs=0;R()">Fiú</button></div></div></div>
-<div class="card"><p class="mut" style="margin:0 0 6px">Frizura</p><div class="row" style="flex-wrap:wrap">${["Rövid","Hosszú","Kontyos","Tüskés"].map((n,i)=>`<button class="alt ${d.hs==i?"on":""}" onclick="draft.hs=${i};R()">${n}</button>`).join("")}</div>
-<p class="mut" style="margin:10px 0 6px">Hajszín</p><div class="row">${sw(HC,"hc")}</div>
-<p class="mut" style="margin:10px 0 6px">Bőrszín</p><div class="row">${sw(SKN,"sk")}</div>
-<p class="mut" style="margin:10px 0 6px">Ruha színe</p><div class="row">${sw(CL,"cl")}</div></div>
-<button style="width:100%" onclick="mk()">Indulhat a kaland!</button>${S.kids.length?`<button class="alt" style="width:100%;margin-top:8px" onclick="draft=null;R()">Mégsem</button>`:""}`}
+return`<h2>${d.eid?"Kinézetem módosítása":"Új hős készítése"}</h2><div class="card row" style="align-items:flex-start">${av(d,130)}<div class="g">
+${d.eid?"":`<input id="nm" placeholder="Hős neve" value="${d.name}" oninput="draft.name=this.value">`}
+<p class="mut" style="margin:8px 0 4px">Nem</p><div class="row"><button class="alt ${d.g=="f"?"on":""}" onclick="draft.g='f';if(!draft.eid)draft.hs=1;R()">Lány</button><button class="alt ${d.g=="m"?"on":""}" onclick="draft.g='m';if(!draft.eid)draft.hs=0;R()">Fiú</button></div></div></div>
+<div class="card"><p class="mut" style="margin:0 0 6px">Frizura</p><div class="row" style="flex-wrap:wrap">${["Rövid","Hosszú","Kontyos","Tüskés","Lófarok","Két copf","Göndör","Bob","Frufrus","Rövidre nyírt"].map((n,i)=>`<button class="alt ${d.hs==i?"on":""}" onclick="draft.hs=${i};R()">${n}</button>`).join("")}</div>
+<p class="mut" style="margin:10px 0 6px">Hajszín</p><div class="row" style="flex-wrap:wrap">${sw(HC,"hc")}</div>
+<p class="mut" style="margin:10px 0 6px">Bőrszín</p><div class="row" style="flex-wrap:wrap">${sw(SKN,"sk")}</div>
+<p class="mut" style="margin:10px 0 6px">Ruha színe</p><div class="row" style="flex-wrap:wrap">${sw(CL,"cl")}</div></div>
+${d.eid?`<button style="width:100%" onclick="saveLook()">Mentés</button><button class="alt" style="width:100%;margin-top:8px" onclick="draft=null;R()">Mégsem</button>`:`<button style="width:100%" onclick="mk()">Indulhat a kaland!</button>${S.kids.length?`<button class="alt" style="width:100%;margin-top:8px" onclick="draft=null;R()">Mégsem</button>`:""}`}`}
 function mk(){const d=draft;if(!d.name.trim()){toast("Adj nevet a hősnek!");return}
 S.kids.push({...d,id:Date.now(),xp:{},coins:0,owned:[],eq:[],pend:[],news:[]});S.cur=S.kids.length-1;draft=null;tab="home";save();R()}
-function newDraft(){draft={name:"",g:"f",hs:1,hc:HC[1],sk:SKN[1],cl:CL[1]}}
+function newDraft(){draft={name:"",g:"f",hs:1,hc:HC[1],sk:SKN[2],cl:CL[1]}}
 function R(){const a=document.getElementById("app");if(!S.pin){a.innerHTML=pinSetup();return}S.cq=S.cq||[];S.kids.forEach(k=>{k.pets=k.pets||[];k.pn=k.pn||{};k.px=k.px||{};k.claims=k.claims||[];k.st=k.st||{};k.hw=k.hw||{};k.tc=k.tc||0;k.gt=k.gt||{}});
 if(!S.kids.length&&!draft)newDraft();
 if(draft){a.innerHTML=creator();return}
@@ -123,7 +129,7 @@ if(k.pend.length)h+=`<div class="card"><b>⏳ Jóváhagyásra vár</b>${k.pend.m
 h+=`<div class="row" style="flex-wrap:wrap;margin:8px 0">Idő: ${[5,15,30,60].map(m=>`<button class="alt ${dur==m?"on":""}" onclick="dur=${m};R()">${m} perc</button>`).join("")}</div>`;
 h+=allQ().map(q=>`<div class="card row"><span style="font-size:30px">${q.i}</span><div class="g"><b>${q.n}</b><div class="mut">${SK[q.s].n} · ${q.x+dur} XP${tbn(k,q.s)}${sinfo(k,q)}</div></div><button onclick="rep(${q.id})">Kész!</button></div>`).join("")}
 if(tab=="inv"){
-h+=`<h2>Táska</h2>${toolsView(k)}${petsView(k)}
+h+=`<h2>Táska</h2><button class="alt" style="width:100%;margin-bottom:8px" onclick="editLook()">🎨 Kinézetem módosítása</button>${toolsView(k)}${petsView(k)}
 <h3 style="margin-top:14px">Ruhatár</h3>${k.owned.length?`<div class="grid">${k.owned.map(id=>{const it=SHOP.find(x=>x.id==id),on=k.eq.includes(id);return`<button class="alt ${on?"on":""}" onclick="eqp('${id}')"><div style="font-size:30px">${it.e}</div>${it.n}<div class="mut">${on?"Viseled":"Felveszem"}</div></button>`}).join("")}</div>`:`<p class="mut">Még üres. Nézz be a boltba!</p>`}`}
 if(tab=="shop"){
 h+=`<h2>Bolt</h2><p class="mut">Egyenleged: 🪙 ${k.coins}</p><p class="mut">Ruhák: csak látvány. Kis társak: bónusz XP (lent). Jutalmak: valódi dolgok, amiket a szülő ad át.</p>`+SHOP.map(it=>{const has=k.owned.includes(it.id);return`<div class="card row"><span style="font-size:30px">${it.e}</span><div class="g"><b>${it.n}</b><div class="mut">🪙 ${it.p}</div></div><button ${has||k.coins<it.p?"disabled":""} onclick="buy('${it.id}')">${has?"Megvan":"Megveszem"}</button></div>`}).join("")+shopMore(k)}
@@ -193,5 +199,7 @@ function renk(){const k=fk(+rk.value),n=rnm.value.trim();if(!k||!n){toast("Írd 
 function petsView(k){let h=`<h3 style="margin-top:14px">🐾 Kis társaim</h3>`;
 if(!k.pets.length)return h+`<p class="mut">Még nincs társad. Nézz be a boltba!</p>`;
 return h+`<p class="mut">Az aktív társ (akit magad mellé hívtál) fejlődik, és ő hozza a bónuszt.</p>`+k.pets.map(id=>{const p=PETS.find(x=>x.id==id),l=plv(k.px[id]),a=k.pa==id;return`<div class="card row"><span style="font-size:34px">${p.e}</span><div class="g"><b>${k.pn[id]||p.n}${a?" ✔":""}</b><div class="mut">${p.n} · ${l}. szint · bónusz: +${Math.min(5,l-1)} XP${id=="dra"?" · 2x érme":""}${a?"":" (ha melletted van)"}</div></div><button class="${a?"":"alt"}" ${a?"disabled":""} onclick="act('${id}')">${a?"Veled van":"Mellém hívom"}</button></div>`}).join("")}
+function editLook(){const k=K();draft={...k,eid:k.id}}
+function saveLook(){const k=K(),d=draft;["g","hs","hc","sk","cl"].forEach(f=>k[f]=d[f]);draft=null;save();toast("Kinézet elmentve");R()}
 R();
 </script></body></html>
