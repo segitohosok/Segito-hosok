@@ -144,15 +144,7 @@ function rep(id){const q=allQ().find(x=>x.id==id),k=K();k.pend.push({t:Date.now(
 const fk=id=>S.kids.find(x=>x.id==id);
 function ok(id,t){const k=fk(id),p=k.pend.find(x=>x.t==t);k.pend=k.pend.filter(x=>x.t!=t);
 const b=lvl(k.xp[p.s]);const tbx=toolBonus(k,p.s,p.xp);p.xp+=tbx+(k.pa?Math.min(5,plv(k.px[k.pa])-1):0);k.xp[p.s]=(k.xp[p.s]||0)+p.xp;let cn=Math.ceil(p.xp/2)*(k.pa=="dra"?2:1);
-
-if(k.pets){
-    k.pets.forEach(pid=>{
-        if(pid!==k.pa){
-            const lvlPet=plv(k.px[pid]||0);
-            cn+=lvlPet;
-        }
-    });
-}
+if(k.pets){k.pets.forEach(pid=>{if(pid!==k.pa){const lvlPet=plv(k.px[pid]||0);cn+=lvlPet;}});}
 k.coins+=cn;
 if(k.pa){const pl=plv(k.px[k.pa]);k.px[k.pa]=(k.px[k.pa]||0)+Math.ceil(p.xp*.6);const nl=plv(k.px[k.pa]);if(nl>pl){k.news.push(`🐾 ${k.pn[k.pa]||"A társad"} szintet lépett: ${nl}. szint! Több bónusz XP jár.`);toast(`🐾 ${k.pn[k.pa]||"A társ"}: ${nl}. szint!`)}}
 const a=lvl(k.xp[p.s]);
