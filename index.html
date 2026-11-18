@@ -40,7 +40,8 @@ vasar:{n:"Bevásárlás",i:"🛒",t:["Szatyor","Vászonkosár","Ezüstkosár","A
 allat:{n:"Állatgondozás",i:"🐾",t:["Zsineg póráz","Bőrpóráz","Ezüstpóráz","Aranypóráz","Gyémántpóráz"],e:"🦴"},
 mosas:{n:"Ruhák és mosás",i:"🫧",t:["Mosóteknő","Vascsipesz","Ezüstcsipesz","Aranycsipesz","Gyémántcsipesz"],e:"🧼"},
 tanul:{n:"Tanulás",i:"📚",t:["Faceruza","Vastoll","Ezüsttoll","Aranytoll","Gyémánttoll"],e:"✏️"},
-onell:{n:"Önellátás",i:"🪥",t:["Fakefe","Vaskefe","Ezüstkefe","Aranykefe","Gyémántkefe"],e:"🪥"}};
+onell:{n:"Önellátás",i:"🪥",t:["Fakefe","Vaskefe","Ezüstkefe","Aranykefe","Gyémántkefe"],e:"🪥"},
+hobbi:{n:"Hobbi (kreativitás)",i:"🧩",t:["Puzzle","Kreatív készlet","Ezüst puzzle","Arany puzzle","Gyémánt puzzle"],e:"🧩"}};
 const TC=["#a67c52","#9aa5ad","#c9d1d8","#ffcf4a","#6fe3ff"];
 const Q=[{id:2,n:"Locsolás, gyomlálás",i:"🚿",s:"kert",x:8},
 {id:3,n:"Szoba rendrakás",i:"🛏️",s:"rend",x:10},{id:4,n:"Játékok elpakolása",i:"🧸",s:"rend",x:6},
@@ -48,7 +49,7 @@ const Q=[{id:2,n:"Locsolás, gyomlálás",i:"🚿",s:"kert",x:8},
 {id:7,n:"Mosogatás, asztalterítés",i:"🍽️",s:"konyha",x:8},{id:8,n:"Bevásárlás, cipelés",i:"🛒",s:"vasar",x:10},
 {id:9,n:"Kutya, macska ellátása",i:"🐕",s:"allat",x:8,d:1},{id:10,n:"Ruhák teregetése, összehajtása",i:"👕",s:"mosas",x:8},
 {id:11,n:"Házi feladat",i:"📚",s:"tanul",x:12,h:1},{id:12,n:"Olvasás",i:"📖",s:"tanul",x:10},{id:13,n:"Gyakorlás (szorzótábla, hangszer)",i:"🧮",s:"tanul",x:10},{id:14,n:"Fogmosás, fürdés",i:"🪥",s:"onell",x:1,d:1},
-{id:15,n:"Szófogadás, viselkedés",i:"😇",s:"onell",x:1}];
+{id:15,n:"Szófogadás, viselkedés",i:"😇",s:"onell",x:1},{id:16,n:"Hobbi (kreativitás)",i:"🧩",s:"hobbi",x:1}];
 const allQ=()=>Q.concat(S.cq||[]);
 const PETS=[{id:"ham",n:"Hörcsög",e:"🐹",p:40},{id:"bun",n:"Nyuszi",e:"🐰",p:70},{id:"cat",n:"Cica",e:"🐱",p:90},{id:"dog",n:"Kutyus",e:"🐶",p:100},{id:"tur",n:"Teknős",e:"🐢",p:130},{id:"dra",n:"Sárkány",e:"🐲",p:400}];
 const DRW=[{id:"r1",n:"Extra 30 perc Telefonozás",e:"📱",p:5000},{id:"r2",n:"Extra 30 perc mesenézés",e:"📺",p:5000},{id:"r3",n:"Közös fagyizás",e:"🍦",p:20000},{id:"r4",n:"MEKI",e:"🍔",p:100000},{id:"r5",n:"Mozizás",e:"🎬",p:100000},{id:"r6",n:"Pizzázás",e:"🍕",p:100000}];
@@ -142,7 +143,17 @@ a.innerHTML=h+nav()}
 function rep(id){const q=allQ().find(x=>x.id==id),k=K();k.pend.push({t:Date.now(),n:q.n,i:q.i,s:q.s,m:dur,xp:q.x+dur,q:q.id});save();toast("Elküldve a szülőnek!<br>"+q.i+" "+q.n);R()}
 const fk=id=>S.kids.find(x=>x.id==id);
 function ok(id,t){const k=fk(id),p=k.pend.find(x=>x.t==t);k.pend=k.pend.filter(x=>x.t!=t);
-const b=lvl(k.xp[p.s]);const tbx=toolBonus(k,p.s,p.xp);p.xp+=tbx+(k.pa?Math.min(5,plv(k.px[k.pa])-1):0);k.xp[p.s]=(k.xp[p.s]||0)+p.xp;const cn=Math.ceil(p.xp/2)*(k.pa=="dra"?2:1);k.coins+=cn;
+const b=lvl(k.xp[p.s]);const tbx=toolBonus(k,p.s,p.xp);p.xp+=tbx+(k.pa?Math.min(5,plv(k.px[k.pa])-1):0);k.xp[p.s]=(k.xp[p.s]||0)+p.xp;let cn=Math.ceil(p.xp/2)*(k.pa=="dra"?2:1);
+
+if(k.pets){
+    k.pets.forEach(pid=>{
+        if(pid!==k.pa){
+            const lvlPet=plv(k.px[pid]||0);
+            cn+=lvlPet;
+        }
+    });
+}
+k.coins+=cn;
 if(k.pa){const pl=plv(k.px[k.pa]);k.px[k.pa]=(k.px[k.pa]||0)+Math.ceil(p.xp*.6);const nl=plv(k.px[k.pa]);if(nl>pl){k.news.push(`🐾 ${k.pn[k.pa]||"A társad"} szintet lépett: ${nl}. szint! Több bónusz XP jár.`);toast(`🐾 ${k.pn[k.pa]||"A társ"}: ${nl}. szint!`)}}
 const a=lvl(k.xp[p.s]);
 k.news.push(`⭐ +${p.xp} XP és 🪙 +${cn} a(z) „${p.n}” feladatért!${tbx?` ${SK[p.s].e} eszközbónusz: +${tbx} XP`:""}`);
@@ -152,7 +163,7 @@ function no(id,t){const k=fk(id);k.pend=k.pend.filter(x=>x.t!=t);save();R()}
 function buy(id){const k=K(),it=SHOP.find(x=>x.id==id);if(k.coins<it.p)return;k.coins-=it.p;k.owned.push(id);k.eq.push(id);save();toast(it.e+" "+it.n+" a tied!");R()}
 function eqp(id){const k=K();k.eq=k.eq.includes(id)?k.eq.filter(x=>x!=id):[...k.eq,id];save();R()}
 function petv(k){if(!k.pa)return"";const p=PETS.find(x=>x.id==k.pa),l=plv(k.px[k.pa]);return`<div style="text-align:center"><div style="font-size:${30+Math.min(l,5)*7}px;line-height:1.1">${p.e}</div><div class="mut" style="font-size:12px">${k.pn[p.id]||p.n}<br>${l}. szint${p.id=="dra"?"<br><b>🪙 2x</b>":""}</div></div>`}
-function shopMore(k){let h=`<h3 style="margin-top:16px">Kis társak</h3><p class="mut">Az aktív társ (akit magad mellé hívtál) a jóváhagyott feladatokból fejlődik. A 2. szinttől szintenként +1 bónusz XP jár minden feladatért, legfeljebb +5 (a 6. szinten), és ennek megfelelően több érme is. A 🐲 Sárkány társ ráadásul 2x érmét hoz minden feladatért, amíg melletted van. A megszerzett társaidat a Táskában találod.</p><input id="pn" placeholder="Név a kis társnak" style="margin:6px 0">`;
+function shopMore(k){let h=`<h3 style="margin-top:16px">Kis társak</h3><p class="mut">Az aktív társ (akit magad mellé hívtál) a jóváhagyott feladatokból fejlődik. A 2. szinttől szintenként +1 bónusz XP jár minden feladatért, legfeljebb +5 (a 6. szinten), és ennek megfelelően több érme is. A 🐲 Sárkány társ ráadásul 2x érmét hoz minden feladatért, amíg melletted van. A megszerzett társaidat a Táskában találod. A táskában lévő társak nem fejlődnek, de szintjük szerint extra érmét hoznak minden jóváhagyott feladat után.</p><input id="pn" placeholder="Név a kis társnak" style="margin:6px 0">`;
 h+=PETS.map(p=>{const own=k.pets.includes(p.id);return`<div class="card row"><span style="font-size:34px">${p.e}</span><div class="g"><b>${p.n}${p.id=="dra"?" 2x 🪙 bónusz":""}</b><div class="mut">${own?"A társaid között van":"🪙 "+p.p}</div></div><button ${own||k.coins<p.p?"disabled":""} onclick="adopt('${p.id}')">${own?"Megvan":"Befogadom"}</button></div>`}).join("");
 h+=`<h3 style="margin-top:16px">Jutalmak</h3><p class="mut">Váltsd be az érméidet valódi jutalomra!</p>`+rw().map(r=>`<div class="card row"><span style="font-size:30px">${r.e}</span><div class="g"><b>${r.n}</b><div class="mut">🪙 ${r.p}</div></div><button ${k.coins<r.p?"disabled":""} onclick="claim('${r.id}')">Kérem!</button></div>`).join("");return h}
 function adopt(id){const k=K(),p=PETS.find(x=>x.id==id);if(k.coins<p.p)return;const el=document.getElementById("pn");k.coins-=p.p;k.pets.push(id);k.pn[id]=(el&&el.value.trim())||p.n;k.px[id]=0;k.pa=id;save();toast(p.e+" "+k.pn[id]+" mostantól a társad!");R()}
@@ -198,8 +209,8 @@ d("🔑 Szülőknek","A Szülő fülön PIN-kóddal hagyod jóvá a feladatokat 
 function renk(){const k=fk(+rk.value),n=rnm.value.trim();if(!k||!n){toast("Írd be az új nevet");return}k.name=n;save();toast("Név módosítva: "+n);R()}
 function petsView(k){let h=`<h3 style="margin-top:14px">🐾 Kis társaim</h3>`;
 if(!k.pets.length)return h+`<p class="mut">Még nincs társad. Nézz be a boltba!</p>`;
-return h+`<p class="mut">Az aktív társ (akit magad mellé hívtál) fejlődik, és ő hozza a bónuszt.</p>`+k.pets.map(id=>{const p=PETS.find(x=>x.id==id),l=plv(k.px[id]),a=k.pa==id;return`<div class="card row"><span style="font-size:34px">${p.e}</span><div class="g"><b>${k.pn[id]||p.n}${a?" ✔":""}</b><div class="mut">${p.n} · ${l}. szint · bónusz: +${Math.min(5,l-1)} XP${id=="dra"?" · 2x érme":""}${a?"":" (ha melletted van)"}</div></div><button class="${a?"":"alt"}" ${a?"disabled":""} onclick="act('${id}')">${a?"Veled van":"Mellém hívom"}</button></div>`}).join("")}
-function editLook(){const k=K();draft={...k,eid:k.id}}
+return h+`<p class="mut">Az aktív társ fejlődik és XP bónuszt ad. A táskában lévő társaid nem fejlődnek tovább, viszont minden jóváhagyott feladatnál bónusz érmét hoznak a szintjük alapján.</p>`+k.pets.map(id=>{const p=PETS.find(x=>x.id==id),l=plv(k.px[id]),a=k.pa==id;return`<div class="card row"><span style="font-size:34px">${p.e}</span><div class="g"><b>${k.pn[id]||p.n}${a?" ✔":""}</b><div class="mut">${p.n} · ${l}. szint · bónusz: +${Math.min(5,l-1)} XP${id=="dra"?" · 2x érme":""}${a?"":" (ha melletted van)"}</div></div><button class="${a?"":"alt"}" ${a?"disabled":""} onclick="act('${id}')">${a?"Veled van":"Mellém hívom"}</button></div>`}).join("")}
+function editLook(){const k=K();draft={...k,eid:k.id}R();}
 function saveLook(){const k=K(),d=draft;["g","hs","hc","sk","cl"].forEach(f=>k[f]=d[f]);draft=null;save();toast("Kinézet elmentve");R()}
 R();
 </script></body></html>
