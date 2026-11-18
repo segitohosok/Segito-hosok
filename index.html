@@ -29,7 +29,7 @@ nav button.on{color:var(--ink);background:var(--line);outline:0}nav b{display:bl
 .toast{position:fixed;left:50%;top:calc(14px + env(safe-area-inset-top,0px));transform:translateX(-50%);background:var(--acc);color:#2b2200;padding:12px 18px;border-radius:16px;font-weight:800;z-index:9;box-shadow:0 6px 20px #0005;animation:pop .5s cubic-bezier(.3,1.6,.5,1);text-align:center;max-width:90%}
 @keyframes pop{from{transform:translateX(-50%) scale(.4);opacity:0}}
 .tool{text-align:center;padding:10px 4px;border-radius:16px;border:3px solid}
-.tool .e{font-size:34px}.sw{width:30px;height:30px;border-radius:50%;padding:0;border:3px solid var(--line)}
+.tool .e{font-size:34px}details.card summary{cursor:pointer}details.card div{font-size:15px}.sw{width:30px;height:30px;border-radius:50%;padding:0;border:3px solid var(--line)}
 @media (prefers-reduced-motion:reduce){.toast{animation:none}.bar i{transition:none}}
 </style></head><body><div id="app"></div><div id="toastbox"></div>
 <script>
@@ -61,7 +61,12 @@ let S=load(),tab="home",draft=null,unlocked=false,dur=15,sel=null;
 function load(){try{return JSON.parse(localStorage.getItem("sh1"))||{kids:[],cur:0,pin:null}}catch(e){return{kids:[],cur:0,pin:null}}}
 function save(){try{localStorage.setItem("sh1",JSON.stringify(S))}catch(e){}}
 const K=()=>S.kids[S.cur];
-const lvl=x=>1+Math.floor(Math.sqrt((x||0)/25)),need=l=>l*l*25,tier=l=>Math.min(4,Math.floor((l-1)/2));
+const lvl=x=>1+Math.floor(Math.sqrt((x||0)/25)),need=l=>l*l*25;
+const TL=[5,10,15,20,25],TB=[5,10,20,35,50];
+const tier=l=>TL.filter(x=>l>=x).length-1;
+const tr=(k,s)=>Math.max(tier(lvl((k.xp||{})[s]||0)),k.gt&&k.gt[s]!=null?k.gt[s]:-1);
+const toolBonus=(k,s,x)=>{const t=tr(k,s);return t<0?0:Math.max(1,Math.round(x*TB[t]/100))};
+const tbn=(k,s)=>{const t=tr(k,s);return t<0?"":` · ${SK[s].e} +${TB[t]}%`};
 function av(k,w){const h=k.hc,eq=k.eq||[];let hair="",back="";
 const base=`<path d="M28 45Q28 20 50 20Q72 20 72 45Q62 32 50 32Q38 32 28 45Z" fill="${h}"/>`;
 if(k.hs==0)hair=base;
@@ -83,7 +88,8 @@ if(eq.includes("horn"))acc+=`<path d="M46 26L50 4L54 26Z" fill="#ff9ad5" stroke=
 if(eq.includes("helm"))acc+=`<path d="M27 38Q27 14 50 14Q73 14 73 38Z" fill="#aab4bd"/><rect x="26" y="34" width="48" height="6" rx="3" fill="#7d8992"/><path d="M50 14V6" stroke="#e8573c" stroke-width="5" stroke-linecap="round"/>`;
 const wing=eq.includes("wings")?`<path d="M30 76Q2 54 8 98Q22 90 30 102Z M70 76Q98 54 92 98Q78 90 70 102Z" fill="#dff3ff" stroke="#8fc8ea" stroke-width="2"/>`:"";
 if(eq.includes("flower"))acc+=`<circle cx="66" cy="30" r="5" fill="#ff7bb0"/><circle cx="66" cy="30" r="2" fill="#ffe27a"/>`;
-return `<svg viewBox="0 0 100 120" width="${w}" height="${w*1.2}" style="flex:none">${wing}${cape}${back}<rect x="30" y="68" width="40" height="46" rx="14" fill="${k.cl}"/><circle cx="50" cy="46" r="22" fill="${k.sk}"/>${hair}<circle cx="42" cy="48" r="2.6" fill="#222"/><circle cx="58" cy="48" r="2.6" fill="#222"/><path d="M43 56Q50 62 57 56" stroke="#a33" stroke-width="2.2" fill="none" stroke-linecap="round"/>${acc}</svg>`}
+let hnd="";if(k.hand&&k.xp){const t=tr(k,k.hand);if(t>=0)hnd=`<circle cx="81" cy="96" r="14" fill="${TC[t]}" opacity=".45"/><text x="81" y="104" font-size="22" text-anchor="middle">${SK[k.hand].e}</text>`}
+return `<svg viewBox="0 0 100 120" width="${w}" height="${w*1.2}" style="flex:none">${wing}${cape}${back}<rect x="30" y="68" width="40" height="46" rx="14" fill="${k.cl}"/><circle cx="50" cy="46" r="22" fill="${k.sk}"/>${hair}<circle cx="42" cy="48" r="2.6" fill="#222"/><circle cx="58" cy="48" r="2.6" fill="#222"/><path d="M43 56Q50 62 57 56" stroke="#a33" stroke-width="2.2" fill="none" stroke-linecap="round"/>${acc}${hnd}</svg>`}
 function toast(m){const d=document.createElement("div");d.className="toast";d.innerHTML=m;document.body.appendChild(d);setTimeout(()=>d.remove(),3800)}
 function nav(){return`<nav>${[["home","🏠","Kaland"],["q","📜","Feladatok"],["inv","🎒","Táska"],["shop","🛍️","Bolt"],["par","🔑","Szülő"]].map(a=>`<button class="${tab==a[0]?"on":""}" onclick="tab='${a[0]}';R()"><b>${a[1]}</b>${a[2]}</button>`).join("")}</nav>`}
 function creator(){const d=draft;
@@ -99,26 +105,28 @@ return`<h2>Új hős készítése</h2><div class="card row" style="align-items:fl
 function mk(){const d=draft;if(!d.name.trim()){toast("Adj nevet a hősnek!");return}
 S.kids.push({...d,id:Date.now(),xp:{},coins:0,owned:[],eq:[],pend:[],news:[]});S.cur=S.kids.length-1;draft=null;tab="home";save();R()}
 function newDraft(){draft={name:"",g:"f",hs:1,hc:HC[1],sk:SKN[1],cl:CL[1]}}
-function R(){const a=document.getElementById("app");if(!S.pin){a.innerHTML=pinSetup();return}S.cq=S.cq||[];S.kids.forEach(k=>{k.pets=k.pets||[];k.pn=k.pn||{};k.px=k.px||{};k.claims=k.claims||[];k.st=k.st||{};k.hw=k.hw||{};k.tc=k.tc||0});
+function R(){const a=document.getElementById("app");if(!S.pin){a.innerHTML=pinSetup();return}S.cq=S.cq||[];S.kids.forEach(k=>{k.pets=k.pets||[];k.pn=k.pn||{};k.px=k.px||{};k.claims=k.claims||[];k.st=k.st||{};k.hw=k.hw||{};k.tc=k.tc||0;k.gt=k.gt||{}});
 if(!S.kids.length&&!draft)newDraft();
 if(draft){a.innerHTML=creator();return}
 const k=K(),tot=Object.values(k.xp).reduce((a,b)=>a+b,0);
 let h=`<div class="top">${S.kids.map((x,i)=>`<button class="${i==S.cur?"on":""}" onclick="S.cur=${i};save();R()">${av(x,22)}${x.name}</button>`).join("")}<button onclick="newDraft();R()">＋</button></div>`;
 if(tab=="home"){
 h+=`<div class="card row">${av(k,110)}${petv(k)}<div class="g"><h2>${k.name}</h2><div class="mut">Hős szint ${1+Math.floor(Math.sqrt(tot/60))}</div><div class="row" style="margin-top:6px;flex-wrap:wrap"><span class="chip">⭐ ${tot} XP</span><span class="chip">🪙 ${k.coins}</span><span class="chip">🎁 ${k.tc%10}/10</span></div></div></div>`;
+h+=`<button class="alt" style="width:100%;margin-top:6px" onclick="tab='help';R()">📖 Hogyan működik?</button>`;
 if(k.news.length)h+=`<div class="card" style="border-color:var(--acc)">${k.news.map(n=>`<div>${n}</div>`).join("")}<button style="margin-top:8px" onclick="K().news=[];save();R()">Szuper!</button></div>`;
 h+=`<h3 style="margin-top:14px">Képességeim</h3>`+Object.keys(SK).map(s=>{const x=k.xp[s]||0,l=lvl(x),lo=(l-1)*(l-1)*25,p=Math.round((x-lo)/(need(l)-lo)*100);
-return`<div class="card"><div class="row sp"><b>${SK[s].i} ${SK[s].n}</b><span class="chip">${l}. szint</span></div><div class="bar" style="margin:6px 0 2px"><i style="width:${p}%"></i></div><div class="mut">${x} / ${need(l)} XP · ${SK[s].t[tier(l)]}</div></div>`}).join("")}
+return`<div class="card"><div class="row sp"><b>${SK[s].i} ${SK[s].n}</b><span class="chip">${l}. szint</span></div><div class="bar" style="margin:6px 0 2px"><i style="width:${p}%"></i></div><div class="mut">${x} / ${need(l)} XP · ${tr(k,s)>=0?SK[s].t[tr(k,s)]:"még nincs eszköz"}</div></div>`}).join("")}
+if(tab=="help")h+=helpView();
 if(tab=="q"){
 h+=`<h2>Mai feladatok</h2><p class="mut">Válassz feladatot, mondd meg mennyi ideig segítettél, aztán a szülő jóváhagyja.</p><p class="mut">🔥 Napi sorozat: fogmosás, fürdés és állatgondozás minden nap (3, 7, 14 és 30 napnál bónusz érme).<br> 📚 Házi feladat: egy héten 5 különböző napon bónusz. <br>🎁 Minden 10. jóváhagyott feladat után meglepetésláda: 1–1000 érme.</p>`;
 if(k.pend.length)h+=`<div class="card"><b>⏳ Jóváhagyásra vár</b>${k.pend.map(p=>`<div class="mut">${p.i} ${p.n} · ${p.m} perc · +${p.xp} XP</div>`).join("")}</div>`;
 h+=`<div class="row" style="flex-wrap:wrap;margin:8px 0">Idő: ${[5,15,30,60].map(m=>`<button class="alt ${dur==m?"on":""}" onclick="dur=${m};R()">${m} perc</button>`).join("")}</div>`;
-h+=allQ().map(q=>`<div class="card row"><span style="font-size:30px">${q.i}</span><div class="g"><b>${q.n}</b><div class="mut">${SK[q.s].n} · ${q.x+dur} XP${sinfo(k,q)}</div></div><button onclick="rep(${q.id})">Kész!</button></div>`).join("")}
+h+=allQ().map(q=>`<div class="card row"><span style="font-size:30px">${q.i}</span><div class="g"><b>${q.n}</b><div class="mut">${SK[q.s].n} · ${q.x+dur} XP${tbn(k,q.s)}${sinfo(k,q)}</div></div><button onclick="rep(${q.id})">Kész!</button></div>`).join("")}
 if(tab=="inv"){
-h+=`<h2>Táska</h2><p class="mut">Az eszközök a képességeddel együtt fejlődnek.</p><div class="grid">${Object.keys(SK).map(s=>{const t=tier(lvl(k.xp[s]));return`<div class="tool" style="border-color:${TC[t]}"><div class="e">${SK[s].e}</div><b>${SK[s].t[t]}</b><div class="mut">${t==4?"Legendás!":"Következő: "+(t*2+3)+". szint"}</div></div>`}).join("")}</div>
+h+=`<h2>Táska</h2>${toolsView(k)}
 <h3 style="margin-top:14px">Ruhatár</h3>${k.owned.length?`<div class="grid">${k.owned.map(id=>{const it=SHOP.find(x=>x.id==id),on=k.eq.includes(id);return`<button class="alt ${on?"on":""}" onclick="eqp('${id}')"><div style="font-size:30px">${it.e}</div>${it.n}<div class="mut">${on?"Viseled":"Felveszem"}</div></button>`}).join("")}</div>`:`<p class="mut">Még üres. Nézz be a boltba!</p>`}`}
 if(tab=="shop"){
-h+=`<h2>Bolt</h2><p class="mut">Egyenleged: 🪙 ${k.coins}</p>`+SHOP.map(it=>{const has=k.owned.includes(it.id);return`<div class="card row"><span style="font-size:30px">${it.e}</span><div class="g"><b>${it.n}</b><div class="mut">🪙 ${it.p}</div></div><button ${has||k.coins<it.p?"disabled":""} onclick="buy('${it.id}')">${has?"Megvan":"Megveszem"}</button></div>`}).join("")+shopMore(k)}
+h+=`<h2>Bolt</h2><p class="mut">Egyenleged: 🪙 ${k.coins}</p><p class="mut">Ruhák: csak látvány. Kis társak: bónusz XP (lent). Jutalmak: valódi dolgok, amiket a szülő ad át.</p>`+SHOP.map(it=>{const has=k.owned.includes(it.id);return`<div class="card row"><span style="font-size:30px">${it.e}</span><div class="g"><b>${it.n}</b><div class="mut">🪙 ${it.p}</div></div><button ${has||k.coins<it.p?"disabled":""} onclick="buy('${it.id}')">${has?"Megvan":"Megveszem"}</button></div>`}).join("")+shopMore(k)}
 if(tab=="par"){
 if(!unlocked)h+=`<h2>Szülői rész</h2><div class="card"><p class="mut" style="margin-top:0">Szülői PIN-kód:</p><input id="pin" type="password" inputmode="numeric" placeholder="PIN"><button style="margin-top:8px" onclick="if(pin.value==S.pin){unlocked=true;R()}else toast('Hibás PIN')">Belépés</button></div>`;
 else{const all=S.kids.flatMap(x=>x.pend.map(p=>({x,p})));
@@ -128,10 +136,10 @@ a.innerHTML=h+nav()}
 function rep(id){const q=allQ().find(x=>x.id==id),k=K();k.pend.push({t:Date.now(),n:q.n,i:q.i,s:q.s,m:dur,xp:q.x+dur,q:q.id});save();toast("Elküldve a szülőnek!<br>"+q.i+" "+q.n);R()}
 const fk=id=>S.kids.find(x=>x.id==id);
 function ok(id,t){const k=fk(id),p=k.pend.find(x=>x.t==t);k.pend=k.pend.filter(x=>x.t!=t);
-const b=lvl(k.xp[p.s]);p.xp+=k.pa?Math.min(5,plv(k.px[k.pa])-1):0;k.xp[p.s]=(k.xp[p.s]||0)+p.xp;const cn=Math.ceil(p.xp/2)*(k.pa=="dra"?2:1);k.coins+=cn;
+const b=lvl(k.xp[p.s]);const tbx=toolBonus(k,p.s,p.xp);p.xp+=tbx+(k.pa?Math.min(5,plv(k.px[k.pa])-1):0);k.xp[p.s]=(k.xp[p.s]||0)+p.xp;const cn=Math.ceil(p.xp/2)*(k.pa=="dra"?2:1);k.coins+=cn;
 if(k.pa){const pl=plv(k.px[k.pa]);k.px[k.pa]=(k.px[k.pa]||0)+Math.ceil(p.xp*.6);const nl=plv(k.px[k.pa]);if(nl>pl){k.news.push(`🐾 ${k.pn[k.pa]||"A társad"} szintet lépett: ${nl}. szint! Több bónusz XP jár.`);toast(`🐾 ${k.pn[k.pa]||"A társ"}: ${nl}. szint!`)}}
 const a=lvl(k.xp[p.s]);
-k.news.push(`⭐ +${p.xp} XP és 🪙 +${cn} a(z) „${p.n}” feladatért!`);
+k.news.push(`⭐ +${p.xp} XP és 🪙 +${cn} a(z) „${p.n}” feladatért!${tbx?` ${SK[p.s].e} eszközbónusz: +${tbx} XP`:""}`);
 if(a>b){k.news.push(`🎉 ${SK[p.s].n}: ${a}. szint!`+(tier(a)>tier(b)?` Új eszköz: <b>${SK[p.s].t[tier(a)]}</b> ${SK[p.s].e}`:""));toast(`🎉 ${k.name}: ${SK[p.s].n} ${a}. szint!`)}
 bonus(k,p);save();R()}
 function no(id,t){const k=fk(id);k.pend=k.pend.filter(x=>x.t!=t);save();R()}
@@ -145,13 +153,13 @@ function adopt(id){const k=K(),p=PETS.find(x=>x.id==id);if(k.coins<p.p)return;co
 function act(id){K().pa=id;save();R()}
 function claim(id){const k=K(),r=rw().find(x=>x.id==id);if(!r||k.coins<r.p)return;k.coins-=r.p;k.claims.push({t:Date.now(),n:r.n,e:r.e,p:r.p});save();toast(r.e+" Elküldve a szülőnek: "+r.n);R()}
 function cdone(id,t,y){const k=fk(id),c=k.claims.find(x=>x.t==t);k.claims=k.claims.filter(x=>x.t!=t);if(!y)k.coins+=c.p;save();R()}
-function addq(){const n=qn.value.trim();if(!n){toast("Írd be a feladat nevét");return}const s=qs.value;S.cq.push({id:Date.now(),n,i:SK[s].e,s,x:Math.max(1,+qx.value||10)});save();R()}
+function addq(){const n=qn.value.trim();if(!n){toast("Írd be a feladat nevét");return}const s=qs.value;S.cq.push({id:Date.now(),n,i:SK[s].e,s,x:Math.max(1,+qx.value||10),d:qd.checked?1:0});save();R()}
 function delq(id){S.cq=S.cq.filter(q=>q.id!=id);save();R()}
 function addr(){const n=rn.value.trim();if(!n){toast("Írd be a jutalom nevét");return}S.rw=rw().concat([{id:"r"+Date.now(),n,e:re.value||"🎁",p:Math.max(1,+rp.value||50)}]);save();R()}
 function delr(id){S.rw=rw().filter(r=>r.id!=id);save();R()}
 function parExtra(){let h="";const cl=S.kids.flatMap(x=>x.claims.map(c=>({x,c})));
 if(cl.length)h+=`<h3 style="margin-top:14px">Jutalom-kérések</h3>`+cl.map(({x,c})=>`<div class="card"><b>${x.name}: ${c.e} ${c.n}</b><div class="row" style="margin-top:8px"><button onclick="cdone(${x.id},${c.t},1)">Átadtam ✔</button><button class="alt" onclick="cdone(${x.id},${c.t},0)">Érmék vissza</button></div></div>`).join("");
-h+=`<h3 style="margin-top:14px">Saját feladat felvétele</h3><div class="card"><input id="qn" placeholder="Feladat neve (pl. Matek házi)"><div class="row" style="margin-top:8px"><select id="qs" style="flex:1">${Object.keys(SK).map(s=>`<option value="${s}">${SK[s].i} ${SK[s].n}</option>`).join("")}</select><input id="qx" type="number" value="10" min="1" style="width:80px"></div><button style="margin-top:8px" onclick="addq()">Hozzáadás</button>${S.cq.map(q=>`<div class="row sp mut" style="margin-top:6px"><span>${q.i} ${q.n} · ${q.x} XP</span><button class="alt" onclick="delq(${q.id})">✕</button></div>`).join("")}</div>`;
+h+=`<h3 style="margin-top:14px">Saját feladat felvétele</h3><div class="card"><input id="qn" placeholder="Feladat neve (pl. Matek házi)"><div class="row" style="margin-top:8px"><select id="qs" style="flex:1">${Object.keys(SK).map(s=>`<option value="${s}">${SK[s].i} ${SK[s].n}</option>`).join("")}</select><input id="qx" type="number" value="10" min="1" style="width:80px"></div><label class="row mut" style="margin-top:8px"><input type="checkbox" id="qd" style="width:auto"> 🔥 Napi sorozatos feladat</label><button style="margin-top:8px" onclick="addq()">Hozzáadás</button>${S.cq.map(q=>`<div class="row sp mut" style="margin-top:6px"><span>${q.i} ${q.n} · ${q.x} XP${q.d?" · 🔥":""}</span><button class="alt" onclick="delq(${q.id})">✕</button></div>`).join("")}</div>`;
 h+=`<h3 style="margin-top:14px">Jutalmak kezelése</h3><div class="card"><input id="rn" placeholder="Jutalom (pl. Fagyizás)"><div class="row" style="margin-top:8px"><input id="re" value="🍦" style="width:70px"><input id="rp" type="number" value="100" style="width:90px"><button onclick="addr()">Hozzáadás</button></div>${rw().map(r=>`<div class="row sp mut" style="margin-top:6px"><span>${r.e} ${r.n} · 🪙 ${r.p}</span><button class="alt" onclick="delr('${r.id}')">✕</button></div>`).join("")}</div>`;return h}
 function pinSetup(){return`<h2>Üdv a Segítő Hősökben!</h2><div class="card"><p style="margin-top:0">Szülő, először állíts be egy PIN-kódot. Ezzel hagyod majd jóvá a gyerekek feladatait.</p><input id="p1" type="password" inputmode="numeric" placeholder="Új PIN (legalább 4 számjegy)"><input id="p2" type="password" inputmode="numeric" placeholder="PIN újra" style="margin-top:8px"><button style="margin-top:10px;width:100%" onclick="setpin()">Mentés és indulás</button><p class="mut" style="margin-bottom:0">Jegyezd meg jól, és a gyerekeknek ne told el.</p></div>`}
 function setpin(){const a=p1.value,b=p2.value;if(!/^\d{4,}$/.test(a)){toast("Legalább 4 számjegy kell");return}if(a!=b){toast("A két PIN nem egyezik");return}S.pin=a;unlocked=false;save();R()}
@@ -163,6 +171,22 @@ if(q.h){const n=k.hw.wk==wk(Date.now())?k.hw.days.length:0;return` · 📚 ${n}/
 function bonus(k,p){const q=allQ().find(x=>x.id==p.q),day=dk(p.t);
 if(q&&q.d){const s=k.st[q.id]||(k.st[q.id]={last:"",n:0});if(s.last<day){const y=new Date(p.t);y.setDate(y.getDate()-1);s.n=s.last==dk(y)?s.n+1:1;s.last=day;const b=SB[s.n]||(s.n>30&&s.n%30==0?600:0);if(b){k.coins+=b;k.news.push(`🔥 ${s.n} napos sorozat: ${q.n}! 🪙 +${b}`);toast(`🔥 ${s.n} nap egymás után!`)}}}
 if(q&&q.h){const w=wk(p.t),h=k.hw;if(h.wk!=w){h.wk=w;h.days=[];h.got=0}if(!h.days.includes(day))h.days.push(day);if(h.days.length>=5&&!h.got){h.got=1;k.coins+=HWB;k.news.push(`📚 Heti házi feladat sorozat: 5 nap! 🪙 +${HWB}`);toast("📚 Heti sorozat teljesítve!")}}
-k.tc=(k.tc||0)+1;if(k.tc%10==0){const r=1+Math.floor(Math.random()*1000);k.coins+=r;k.news.push(`🎁 Meglepetésláda! 🪙 +${r}`);toast(`🎁 Meglepetésláda: 🪙 +${r}`)}}
+k.tc=(k.tc||0)+1;if(k.tc%10==0){const cand=Object.keys(SK).filter(s=>tr(k,s)<4);if(cand.length&&Math.random()<.05){const s=cand[Math.floor(Math.random()*cand.length)],t=tr(k,s)+1;k.gt=k.gt||{};k.gt[s]=t;k.news.push(`🎁 Meglepetésláda: ajándék eszköz! <b>${SK[s].t[t]}</b> ${SK[s].e} (+${TB[t]}% XP)`);toast(`🎁 Ajándék eszköz: ${SK[s].t[t]}!`)}else{const r=1+Math.floor(Math.random()*1000);k.coins+=r;k.news.push(`🎁 Meglepetésláda! 🪙 +${r}`);toast(`🎁 Meglepetésláda: 🪙 +${r}`)}}}
+function toolsView(k){let h=`<p class="mut">Az eszköz bónusz XP-t ad az adott képesség feladataiért (az érme is az XP-ből jön). Eszközt a képesség szintjével érdemelsz ki: 5. szinten fa, 10-en vas, 15-en ezüst, 20-on arany, 25-en gyémánt. A meglepetésládából is jöhet ajándék eszköz 🎁. A kézbe vett eszköz megjelenik a hősödnél.</p><div class="grid">`;
+return h+Object.keys(SK).map(s=>{const l=lvl(k.xp[s]||0),t=tr(k,s),g=k.gt&&k.gt[s]>tier(l);
+if(t<0)return`<div class="tool" style="border-color:var(--line);opacity:.85"><div class="e" style="filter:grayscale(1)">${SK[s].e}</div><b>🔒 ${SK[s].t[0]}</b><div class="mut">az ${TL[0]}. szinten kapod<br>${SK[s].n}: ${l}. szint</div></div>`;
+const nx=t<4?`Következő: ${SK[s].t[t+1]} (${TL[t+1]}. szint)`:"Legendás!";
+return`<div class="tool" style="border-color:${TC[t]}"><div class="e">${SK[s].e}</div><b>${SK[s].t[t]}${g?" 🎁":""}</b><div class="mut">+${TB[t]}% XP<br>${nx}</div><button class="alt ${k.hand==s?"on":""}" style="margin-top:6px;padding:4px 8px;font-size:13px" onclick="hand('${s}')">${k.hand==s?"Kezedben":"Kézbe veszem"}</button></div>`}).join("")+`</div>`}
+function hand(s){const k=K();k.hand=k.hand==s?null:s;save();R()}
+function helpView(){const d=(t,b)=>`<details class="card"><summary><b>${t}</b></summary><div style="margin-top:8px">${b}</div></details>`;
+const back=`<button class="alt" style="width:100%" onclick="tab='home';R()">← Vissza</button>`;
+return`<h2>Hogyan működik?</h2><p class="mut">Koppints egy részre, és kinyílik.</p>`+
+d("⭐ XP és szintek","Minden feladat XP-t ér: az alap XP-hez hozzáadódik az idő percekben. A szülő jóváhagyja, és a képességed megkapja az XP-t. Az n. szinthez (n−1)² × 25 XP kell: 2. szint 25 XP, 3. szint 100 XP, 5. szint 400 XP, 10. szint 2025 XP.")+
+d("🛠️ Eszközök és bónuszok",`Alapból nincs eszközöd, a képesség szintjével érdemled ki: ${["fa","vas","ezüst","arany","gyémánt"].map((n,i)=>`${TL[i]}. szint: ${n} (+${TB[i]}% XP)`).join(" · ")}. A bónusz az adott képesség feladataiért jár, és az érme is nő vele. Az eszközt kézbe is veheted a Táskában, ekkor a hősödnél látszik. Meglepetésládából ajándék eszköz is jöhet: eggyel magasabb fokozat. A szint és az ajándék közül a magasabb számít.`)+
+d("🐾 Kis társak","Az aktív társ a jóváhagyott feladatokból fejlődik. A 2. szinttől szintenként +1 bónusz XP jár, legfeljebb +5 (6. szinten). A 🐲 Sárkány ráadásul 2x érmét hoz, amíg melletted van.")+
+d("🔥 Sorozatok",`Napi sorozat: fogmosás, fürdés, állatgondozás és a szülő által megjelölt feladatok. Egymás utáni napokon bónusz érme: ${Object.entries(SB).map(([n,b])=>`${n}. nap +${b}`).join(", ")}. 📚 Házi feladat: egy héten (hétfőtől vasárnapig) 5 különböző napon +${HWB} érme.`)+
+d("🎁 Meglepetésláda","Minden 10. jóváhagyott feladat után meglepetésláda jár: 95% eséllyel 1–1000 érme, 5% eséllyel ajándék eszköz.")+
+d("🪙 Érme és jutalmak","Egy feladatért az XP felének megfelelő érme jár (felfelé kerekítve, a Sárkánnyal dupla). A Boltban ruhát és kis társat vehetsz, vagy valódi jutalmat kérhetsz, amit a szülő ad át.")+
+d("🔑 Szülőknek","A Szülő fülön PIN-kóddal hagyod jóvá a feladatokat és az érmés jutalmak átadását. Saját feladatot és jutalmat is felvehetsz, és megjelölheted, hogy egy feladat napi sorozatos legyen.")+back}
 R();
 </script></body></html>
